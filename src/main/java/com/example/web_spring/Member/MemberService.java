@@ -20,13 +20,12 @@ public class MemberService {
         validateDuplicateMember(joinDto.getUsername());
 
         // 2. 엔티티 생성 (Setter 없이 DTO를 통해 데이터 주입)
-        Member member = new Member();
-        member.createMember(
+        // createMember 호출 시 엔티티 내부에서 role을 ROLE_USER로 설정
+        Member member = Member.createMember(
                 joinDto.getUsername(),
-                passwordEncoder.encode(joinDto.getPassword()), // 비밀번호 암호화
+                passwordEncoder.encode(joinDto.getPassword()),
                 joinDto.getEmail(),
                 joinDto.getPhone()
-                // role 등 나머지 정보
         );
         memberRepository.save(member);
         return member.getId();

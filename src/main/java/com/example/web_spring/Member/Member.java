@@ -21,7 +21,7 @@ public class Member {
 
     private String email;
     private String phone;
-    private String role; // 권한 (User, Admin 등)
+    private Role role; // 권한 (User, Admin 등)
 
     private LocalDateTime createdAt;
 
@@ -29,11 +29,15 @@ public class Member {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
-    public void createMember(String username, String password,
-                             String email, String phone) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.phone = phone;
+
+    public static Member createMember(String username, String password, String email, String phone) {
+        Member member = new Member();
+        member.username = username;
+        member.password = password;
+        member.email = email;
+        member.phone = phone;
+        member.role = Role.ROLE_USER; // 기본값을 ROLE_USER로 할당
+        member.createdAt = LocalDateTime.now();
+        return member;
     }
 }
