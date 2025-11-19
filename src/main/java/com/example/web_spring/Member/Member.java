@@ -29,4 +29,11 @@ public class Member {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+    public void createMember(String username, String password,
+                             String email, String phone) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phone = phone;
+    }
 }
