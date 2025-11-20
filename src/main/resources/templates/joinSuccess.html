@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 완료</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header>
+    <h1>쇼핑몰 회원가입</h1>
+</header>
+
+<main class="success-container">
+    <div class="success-box">
+        <h2>회원가입이 성공적으로 완료되었습니다!</h2>
+        <p>저희 쇼핑몰의 회원이 되신 것을 진심으로 환영합니다.</p>
+        <p>다양한 상품과 서비스를 지금 바로 이용해 보세요.</p>
+
+        <div class="action-buttons">
+            <a th:href="@{/}" class="btn btn-main">메인으로 이동</a>
+
+            <a th:href="@{/login}" class="btn btn-login">로그인 하기</a>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2025 Shopping Mall</p>
+</footer>
+</body>
+</html>
