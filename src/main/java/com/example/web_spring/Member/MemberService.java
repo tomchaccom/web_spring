@@ -31,7 +31,7 @@ public class MemberService {
         return member.getId();
     }
 
-    private void validateDuplicateMember(String username) {
+    public void validateDuplicateMember(String username) {
         memberRepository.findByUsername(username)
                 .ifPresent(m -> {
                     throw new IllegalStateException("이미 존재하는 회원 ID입니다.");
