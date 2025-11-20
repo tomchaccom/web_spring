@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header>
+    <h1>쇼핑몰 회원가입</h1>
+</header>
+
+<main class="join-container">
+    <form th:action="@{/join}" th:object="${memberJoinDto}" method="post" id="joinForm">
+
+        <section class="agreement-section">
+            <h2>1. 서비스 이용 약관 동의</h2>
+
+            <div class="agree-all">
+                <input type="checkbox" id="agreeAll" name="agreeAll">
+                <label for="agreeAll"> **전체 약관에 동의합니다.** (선택 항목 포함)</label>
+            </div>
+
+            <hr>
+
+            <div class="agreement-item">
+                <input type="checkbox" id="agreeService" name="agreeService" required>
+                <label for="agreeService"> [필수] 이용 약관 동의</label>
+                <button type="button" onclick="showTerms('service')">전문 보기</button>
+            </div>
+
+            <div class="agreement-item">
+                <input type="checkbox" id="agreePrivacy" name="agreePrivacy" required>
+                <label for="agreePrivacy"> [필수] 개인정보 수집 및 이용 동의</label>
+                <button type="button" onclick="showTerms('privacy')">전문 보기</button>
+            </div>
+
+            <div class="agreement-item">
+                <input type="checkbox" id="agreeMarketing" name="agreeMarketing">
+                <label for="agreeMarketing"> [선택] 마케팅 정보 수신 동의</label>
+                <button type="button" onclick="showTerms('marketing')">전문 보기</button>
+            </div>
+
+            <div class="agreement-item">
+                <input type="checkbox" id="agreeSms" name="agreeSms">
+                <label for="agreeSms"> [선택] SMS 수신 동의</label>
+            </div>
+
+        </section>
+
+        <hr>
+
+        <section class="info-input-section">
+            <h2>2. 회원 정보 입력</h2>
+
+            <div class="form-group">
+                <label for="username">아이디 (ID) <span class="required">*</span></label>
+                <input type="text" id="username" th:field="*{username}" required>
+                <button type="button" onclick="checkDuplicate()">중복 확인</button>
+            </div>
+
+            <div class="form-group">
+                <label for="password">비밀번호 <span class="required">*</span></label>
+                <input type="password" id="password" th:field="*{password}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="passwordConfirm">비밀번호 확인 <span class="required">*</span></label>
+                <input type="password" id="passwordConfirm" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">이메일 <span class="required">*</span></label>
+                <input type="email" id="email" th:field="*{email}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">휴대폰 번호</label>
+                <input type="tel" id="phone" th:field="*{phone}">
+            </div>
+
+        </section>
+
+        <button type="submit" class="submit-button" disabled>회원가입</button>
+        <p id="agreement-message" style="color: red; margin-top: 10px;">필수 약관에 동의해야 가입할 수 있습니다.</p>
+    </form>
+</main>
+
+<script th:src="@{/js/join.js}"></script>
+<script>
+    // JS는 HTML 영역이므로, Thymeleaf 속성을 제거하고 순수 JS로 유지
+    const agreeAll = document.getElementById('agreeAll');
+    const requiredCheckboxes = document.querySelectorAll('input[required]');
+    const allCheckboxes = document.querySelectorAll('.agreement-item input[type="checkbox"]');
+    const submitButton = document.querySelector('.submit-button');
+    const agreementMessage = document.getElementById('agreement-message');
+
+    agreeAll.addEventListener('change', function() {
+        allCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        checkAgreementStatus();
+    });
+
+    allCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const requiredAgreed = Array.from(requiredCheckboxes).every(cb => cb.checked);
+            const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+            agreeAll.checked = allChecked;
+            checkAgreementStatus();
+        });
+    });
+
+    function checkAgreementStatus() {
+        const requiredAgreed = Array.from(requiredCheckboxes).every(cb => cb.checked);
+
+        if (requiredAgreed) {
+            submitButton.disabled = false;
+            agreementMessage.style.display = 'none';
+        } else {
+            submitButton.disabled = true;
+            agreementMessage.style.display = 'block';
+        }
+    }
+
+    checkAgreementStatus();
+
+    function checkDuplicate() {
+        console.log('ID 중복 확인 기능 실행 (API 호출 필요)');
+    }
+
+    function showTerms(type) {
+        alert(type.toUpperCase() + ' 약관 전문을 팝업으로 보여줍니다.');
+    }
+</script>
+</body>
+</html>
