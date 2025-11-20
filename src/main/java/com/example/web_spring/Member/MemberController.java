@@ -1,11 +1,13 @@
 package com.example.web_spring.Member;
 
 import com.example.web_spring.Member.Dto.MemberJoinDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -43,5 +45,16 @@ public class MemberController {
     @GetMapping("/login")
     public String loginForm() {
         return "login";
+    }
+
+    @GetMapping("/join/dup")
+    public ResponseEntity<?> duplicateForm(
+            @RequestParam String username) {
+        try{
+            memberService.validateDuplicateMember(username);
+            return ResponseEntity.ok().build();
+        }catch (IllegalStateException e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

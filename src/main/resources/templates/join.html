@@ -75,7 +75,10 @@
                         <input type="text" id="username" class="form-control" th:field="*{username}" required>
                         <button type="button" class="btn btn-outline-primary" onclick="checkDuplicate()">중복 확인</button>
                     </div>
+                    <!-- 결과 메시지 -->
+                    <small id="dup-message" class="mt-1 d-block"></small>
                 </div>
+
 
                 <div class="mb-3">
                     <label for="password" class="form-label">비밀번호 *</label>
@@ -152,8 +155,32 @@
 
     checkAgreementStatus();
 
-    function checkDuplicate() {
-        alert("ID 중복 확인 기능 (API 필요)");
+    async function checkDuplicate() {
+        const username = document.getElementById("username").value.trim();
+        const messageEl = document.getElementById("dup-message");
+
+        if (username === "") {
+            messageEl.textContent = "아이디를 입력하세요.";
+            messageEl.className = "text-danger";
+            return;
+        }
+
+        try {
+            const res = await fetch(`/join/dup?username=` + encodeURIComponent(username));
+
+            if (res.ok) {
+                // 사용 가능
+                messageEl.textContent = "사용 가능한 아이디입니다.";
+                messageEl.className = "text-success";
+            } else {
+                // 중복
+                messageEl.textContent = "이미 사용 중인 아이디입니다.";
+                messageEl.className = "text-danger";
+            }
+        } catch (e) {
+            messageEl.textContent = "중복 확인 중 오류가 발생했습니다.";
+            messageEl.className = "text-danger";
+        }
     }
 
     function showTerms(type) {
