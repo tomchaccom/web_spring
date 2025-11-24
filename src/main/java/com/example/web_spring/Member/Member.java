@@ -30,13 +30,13 @@ public class Member {
         this.createdAt = LocalDateTime.now();
     }
 
-    public static Member createMember(String username, String password, String email, String phone) {
+    public static Member createMember(String username, String password, String email, String phone, Role role) {
         Member member = new Member();
         member.username = username;
         member.password = password;
         member.email = email;
         member.phone = phone;
-        member.role = Role.ROLE_USER; // 기본값을 ROLE_USER로 할당
+        member.role = role; // 기본값을 ROLE_USER로 할당
         member.createdAt = LocalDateTime.now();
         return member;
     }
