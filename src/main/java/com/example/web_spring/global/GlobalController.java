@@ -25,4 +25,12 @@ public class GlobalController {
         }
         return "main/info";
     }
+    @GetMapping("/support")
+    public String support(Model model, Principal principal) {
+        if (principal != null) {
+            model.addAttribute("userName", principal.getName());
+        }
+        return "main/support";
+    }
+
 }
