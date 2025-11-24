@@ -50,6 +50,17 @@
         <a th:href="@{/find}" class="text-decoration-none">아이디/비밀번호 찾기</a>
       </div>
 
+      <!-- 성공 메시지 -->
+      <div th:if="${successMessage}" class="alert alert-success mt-3" role="alert">
+        <span th:text="${successMessage}"></span>
+      </div>
+
+      <!-- 에러 메시지 (혹시 필요하다면) -->
+      <div th:if="${errorMessage}" class="alert alert-danger mt-3" role="alert">
+        <span th:text="${errorMessage}"></span>
+      </div>
+
+
     </div>
   </div>
 </main>

@@ -1,6 +1,9 @@
 package com.example.web_spring.Member;
 
+import com.example.web_spring.Member.Dto.FindUserIdDto;
+import com.example.web_spring.Member.Dto.FindUserPasswordDto;
 import com.example.web_spring.Member.Dto.MemberJoinDto;
+import com.example.web_spring.global.NotSignUpUserException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -57,4 +61,41 @@ public class MemberController {
             return ResponseEntity.badRequest().build();
         }
     }
+    // 아이디 비밀번호 찾기 뷰 제공
+    @GetMapping("/find")
+    public String findForm() {
+        return "find/find";
+    }
+
+    // 아이디 찾기
+    @PostMapping("/find/id")
+    public String findId(
+            FindUserIdDto dto,
+            RedirectAttributes ra
+    ) {
+        try {
+            String userName = memberService.userFindId(dto);
+            ra.addFlashAttribute("userName", userName);
+            return "redirect:/find";
+        } catch (NotSignUpUserException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/find";
+        }
+    }
+
+    @PostMapping("/find/password")
+    public String findPasswordAndChangePassword(
+            FindUserPasswordDto dto,
+            RedirectAttributes ra
+    ) {
+        try {
+            memberService.findPassword(dto);
+            ra.addFlashAttribute("successMessage", "비밀번호가 재설정 되었습니다..");
+            return "redirect:/login";
+        } catch (NotSignUpUserException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/find";
+        }
+    }
+
 }
