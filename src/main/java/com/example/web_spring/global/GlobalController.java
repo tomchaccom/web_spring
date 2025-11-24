@@ -17,4 +17,12 @@ public class GlobalController {
         }
         return "main"; // 메인 뷰
     }
+
+    @GetMapping("/info")
+    public String info(Model model, Principal principal) {
+        if (principal != null) {
+            model.addAttribute("userName", principal.getName());
+        }
+        return "main/info";
+    }
 }
