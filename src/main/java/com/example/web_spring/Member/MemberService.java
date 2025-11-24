@@ -25,7 +25,8 @@ public class MemberService {
                 joinDto.getUsername(),
                 passwordEncoder.encode(joinDto.getPassword()),
                 joinDto.getEmail(),
-                joinDto.getPhone()
+                joinDto.getPhone(),
+                Role.ROLE_USER
         );
         memberRepository.save(member);
         return member.getId();
