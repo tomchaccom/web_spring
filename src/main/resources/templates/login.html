@@ -28,6 +28,11 @@
         아이디 또는 비밀번호가 일치하지 않습니다.
       </div>
 
+      <!-- 중복 로그인 메시지 -->
+      <div th:if="${param.duplicate}" class="alert alert-warning">
+        이미 로그인 중인 계정입니다. 다른 세션을 종료하고 다시 시도하세요.
+      </div>
+
       <!-- 로그인 폼 -->
       <form th:action="@{/login}" method="post">
 
