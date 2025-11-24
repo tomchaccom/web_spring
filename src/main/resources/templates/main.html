@@ -28,44 +28,62 @@
     </style>
 </head>
 <body>
-<!-- 헤더 -->
-<!-- 헤더 -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">전자기기몰</a>
+<div class="top-utility-bar bg-dark text-light border-bottom border-secondary">
+    <div class="container d-flex justify-content-end align-items-center py-1 small">
+
+        <div class="me-auto d-flex">
+            <a href="/info" class="text-light me-3 text-decoration-none opacity-75 hover-opacity-100">이용안내</a>
+            <a href="/support" class="text-light text-decoration-none opacity-75 hover-opacity-100">고객센터</a>
+        </div>
+
+        <ul class="list-unstyled d-flex mb-0">
+            <li class="px-2 border-end border-secondary" th:if="${userName != null}">
+                <a class="text-light text-decoration-none disabled opacity-75">안녕하세요, <strong th:text="${userName}"></strong>님</a>
+            </li>
+            <li class="px-2 border-end border-secondary" th:if="${userName != null}">
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button class="btn btn-link text-light text-decoration-none p-0 opacity-75 hover-opacity-100 small" type="submit">로그아웃</button>
+                </form>
+            </li>
+            <li class="px-2 border-end border-secondary" th:if="${userName != null}">
+                <a class="text-light text-decoration-none opacity-75 hover-opacity-100" th:href="@{/mypage}">마이페이지</a>
+            </li>
+
+            <li class="px-2 border-end border-secondary" th:if="${userName == null}">
+                <a class="text-light text-decoration-none opacity-75 hover-opacity-100" th:href="@{/login}">로그인</a>
+            </li>
+            <li class="px-2 border-end border-secondary" th:if="${userName == null}">
+                <a class="text-light text-decoration-none opacity-75 hover-opacity-100" th:href="@{/join}">회원가입</a>
+            </li>
+
+            <li class="ps-2">
+                <a class="text-light text-decoration-none opacity-75 hover-opacity-100" th:href="@{/cart}">장바구니</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+    <div class="container">
+        <a class="navbar-brand fs-4 me-5" href="/"><strong>전자상거래몰</strong></a>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
-            <form class="d-flex ms-auto" th:action="@{/search}" method="get">
-                <input class="form-control me-2" type="search" placeholder="검색" name="q">
-                <button class="btn btn-outline-light" type="submit">검색</button>
-            </form>
 
-            <ul class="navbar-nav ms-3">
-                <!-- 로그인 상태 -->
-                <li class="nav-item" th:if="${userName != null}">
-                    <a class="nav-link disabled">안녕하세요, <strong th:text="${userName}"></strong>님</a>
-                </li>
-                <li class="nav-item" th:if="${userName != null}">
-                    <form th:action="@{/logout}" method="post" style="display:inline;">
-                        <button class="btn btn-link nav-link" type="submit" style="padding: 0;">로그아웃</button>
-                    </form>
-                </li>
-
-                <!-- 비로그인 상태 -->
-                <li class="nav-item" th:if="${userName == null}">
-                    <a class="nav-link" th:href="@{/login}">로그인</a>
-                </li>
-                <li class="nav-item" th:if="${userName == null}">
-                    <a class="nav-link" th:href="@{/join}">회원가입</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/cart}">장바구니</a>
-                </li>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item me-3"><a class="nav-link" href="#">전체 카테고리</a></li>
+                <li class="nav-item me-3"><a class="nav-link" href="#">노트북</a></li>
+                <li class="nav-item me-3"><a class="nav-link" href="#">스마트폰</a></li>
+                <li class="nav-item me-3"><a class="nav-link" href="#">악세서리</a></li>
             </ul>
 
+            <form class="d-flex ms-auto" th:action="@{/search}" method="get">
+                <input class="form-control me-2" type="search" placeholder="검색" name="q" style="width: 250px;">
+                <button class="btn btn-outline-light" type="submit">검색</button>
+            </form>
         </div>
     </div>
 </nav>
