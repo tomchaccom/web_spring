@@ -1,10 +1,15 @@
 package com.example.web_spring.Member;
 
+import com.example.web_spring.Member.Dto.FindUserIdDto;
+import com.example.web_spring.Member.Dto.FindUserPasswordDto;
 import com.example.web_spring.Member.Dto.MemberJoinDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.web_spring.global.NotSignUpUserException;
+
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -14,7 +19,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder; // 비밀번호 암호화를 위해 사용
 
-
+    @Transactional
     public Long join(MemberJoinDto joinDto) {
 
         validateDuplicateMember(joinDto.getUsername());
@@ -37,5 +42,38 @@ public class MemberService {
                 .ifPresent(m -> {
                     throw new IllegalStateException("이미 존재하는 회원 ID입니다.");
                 });
+    }
+
+    @Transactional
+    // ID 찾기는 이메일과 유저명을 입력받기
+    public String userFindId(FindUserIdDto dto) {
+
+        Member member = memberRepository.findByEmailAndPhone(dto.getEmail(), dto.getPhone())
+                .orElseThrow(() -> new NotSignUpUserException("아이디 찾기는 회원 가입 후 진행할 수 있습니다."));
+
+        return member.getUsername();
+    }
+
+    // 비밀번호 찾기
+    @Transactional
+    public void findPassword(FindUserPasswordDto dto) {
+
+        Optional<Member> memberOpt = Optional.empty();
+
+        if (dto.getEmail() != null) {
+            memberOpt = memberRepository.findByUsernameAndEmail(dto.getUsername(), dto.getEmail());
+        } else if (dto.getPhone() != null) {
+            memberOpt = memberRepository.findByUsernameAndPhone(dto.getUsername(), dto.getPhone());
+        }
+
+        Member member = memberOpt.orElseThrow(
+                () -> new NotSignUpUserException("입력하신 정보로 가입된 계정을 찾을 수 없습니다.")
+        );
+
+        changePassword(member, dto.getNewPassword());
+    }
+
+    private void changePassword(Member member, String password) {
+        member.changePassword( passwordEncoder.encode(password));
     }
 }

@@ -28,6 +28,11 @@
         아이디 또는 비밀번호가 일치하지 않습니다.
       </div>
 
+      <!-- 중복 로그인 메시지 -->
+      <div th:if="${param.duplicate}" class="alert alert-warning">
+        이미 로그인 중인 계정입니다. 다른 세션을 종료하고 다시 시도하세요.
+      </div>
+
       <!-- 로그인 폼 -->
       <form th:action="@{/login}" method="post">
 
@@ -49,6 +54,17 @@
         <a th:href="@{/join}" class="text-decoration-none">회원가입</a>
         <a th:href="@{/find}" class="text-decoration-none">아이디/비밀번호 찾기</a>
       </div>
+
+      <!-- 성공 메시지 -->
+      <div th:if="${successMessage}" class="alert alert-success mt-3" role="alert">
+        <span th:text="${successMessage}"></span>
+      </div>
+
+      <!-- 에러 메시지 (혹시 필요하다면) -->
+      <div th:if="${errorMessage}" class="alert alert-danger mt-3" role="alert">
+        <span th:text="${errorMessage}"></span>
+      </div>
+
 
     </div>
   </div>

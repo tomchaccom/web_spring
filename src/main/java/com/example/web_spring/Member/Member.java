@@ -40,4 +40,7 @@ public class Member {
         member.createdAt = LocalDateTime.now();
         return member;
     }
+    protected void changePassword(String password) {
+        this.password = password;
+    }
 }
