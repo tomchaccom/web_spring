@@ -3,6 +3,7 @@ package com.example.web_spring.Member;
 import com.example.web_spring.Member.Dto.FindUserIdDto;
 import com.example.web_spring.Member.Dto.FindUserPasswordDto;
 import com.example.web_spring.Member.Dto.MemberJoinDto;
+import com.example.web_spring.Member.Dto.UpdateUserInfoDto;
 import com.example.web_spring.global.NotSignUpUserException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
@@ -96,6 +99,16 @@ public class MemberController {
             ra.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/find";
         }
+    }
+
+    @PostMapping("/mypage/edit")
+    public String updateUserInfo(
+            Principal principal,
+            UpdateUserInfoDto dto
+
+    ){
+        memberService.updateUserInfo(principal.getName(), dto);
+        return "redirect:/mypage";
     }
 
 }
