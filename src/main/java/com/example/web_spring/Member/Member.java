@@ -43,4 +43,8 @@ public class Member {
     protected void changePassword(String password) {
         this.password = password;
     }
+    protected void changeUserInfo(String email, String phone) {
+        this.email = email;
+        this.phone = phone;
+    }
 }

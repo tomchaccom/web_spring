@@ -1,8 +1,6 @@
 package com.example.web_spring.Member;
 
-import com.example.web_spring.Member.Dto.FindUserIdDto;
-import com.example.web_spring.Member.Dto.FindUserPasswordDto;
-import com.example.web_spring.Member.Dto.MemberJoinDto;
+import com.example.web_spring.Member.Dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -75,5 +73,21 @@ public class MemberService {
 
     private void changePassword(Member member, String password) {
         member.changePassword( passwordEncoder.encode(password));
+    }
+
+    @Transactional
+    public void updateUserInfo(String username, UpdateUserInfoDto dto){
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new NotSignUpUserException("입력하신 정보로 가입된 계정을 찾을 수 없습니다."));
+        member.changeUserInfo(dto.getEmail(),dto.getPhone());
+
+    }
+    @Transactional(readOnly = true)
+    public GetUserInfoDto getUserInfo(String username){
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new NotSignUpUserException("입력하신 정보로 가입된 계정을 찾을 수 없습니다."));
+
+        return new GetUserInfoDto(member);
+
     }
 }

@@ -28,48 +28,10 @@
     </style>
 </head>
 <body>
-<!-- 헤더 -->
-<!-- 헤더 -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">전자기기몰</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <form class="d-flex ms-auto" th:action="@{/search}" method="get">
-                <input class="form-control me-2" type="search" placeholder="검색" name="q">
-                <button class="btn btn-outline-light" type="submit">검색</button>
-            </form>
 
-            <ul class="navbar-nav ms-3">
-                <!-- 로그인 상태 -->
-                <li class="nav-item" th:if="${userName != null}">
-                    <a class="nav-link disabled">안녕하세요, <strong th:text="${userName}"></strong>님</a>
-                </li>
-                <li class="nav-item" th:if="${userName != null}">
-                    <form th:action="@{/logout}" method="post" style="display:inline;">
-                        <button class="btn btn-link nav-link" type="submit" style="padding: 0;">로그아웃</button>
-                    </form>
-                </li>
-
-                <!-- 비로그인 상태 -->
-                <li class="nav-item" th:if="${userName == null}">
-                    <a class="nav-link" th:href="@{/login}">로그인</a>
-                </li>
-                <li class="nav-item" th:if="${userName == null}">
-                    <a class="nav-link" th:href="@{/join}">회원가입</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/cart}">장바구니</a>
-                </li>
-            </ul>
-
-        </div>
-    </div>
-</nav>
-
+<!-- 공통 헤더 포함 -->
+<div th:replace="fragments/header :: top-utility-bar"></div>
+<div th:replace="fragments/header :: navbar"></div>
 
 <!-- 메인 배너 -->
 <div id="mainCarousel" class="carousel slide mt-3" data-bs-ride="carousel">
@@ -141,5 +103,6 @@
         <a href="#" class="text-light">트위터</a>
     </div>
 </footer>
+
 </body>
 </html>
