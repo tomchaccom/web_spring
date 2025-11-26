@@ -1,11 +1,11 @@
 package com.example.web_spring.Product;
 
-import com.example.web_spring.global.ProductDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -17,11 +17,17 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/products")
-    public String productList(Model model) {
+    public String productList(
+            Model model,
+            @RequestParam(required = false) String query) {
 
-        List<Product> products = productRepository.findAll();
-
-        model.addAttribute("products", products);
+        if(query == null){
+            List<Product> products = productRepository.findAll();
+            model.addAttribute("products", products);
+        }else{
+            List<Product> products = productRepository.findByCategoryName(query);
+            model.addAttribute("products", products);
+        }
 
         return "main/product"; //
     }
