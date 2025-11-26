@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-class ProductDto {
+public class ProductDto {
     private Long id;
     private String name;
     private int price;

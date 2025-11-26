@@ -52,11 +52,12 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item me-3"><a class="nav-link" href="#">전체 카테고리</a></li>
+                <li class="nav-item me-3"><a class="nav-link" th:href="@{/products}">모든 상품</a></li>
                 <li class="nav-item me-3"><a class="nav-link" href="#">노트북</a></li>
                 <li class="nav-item me-3"><a class="nav-link" href="#">스마트폰</a></li>
                 <li class="nav-item me-3"><a class="nav-link" href="#">악세서리</a></li>
             </ul>
+
 
             <form class="d-flex ms-auto" th:action="@{/search}" method="get">
                 <input class="form-control me-2" type="search" placeholder="검색" name="q" style="width: 250px;">
