@@ -90,4 +90,20 @@ public class CartService {
 
         cartRepository.deleteByMemberAndProduct(member, product);
     }
+
+    /** 총 금액(username 기반) */
+    public int getTotalPrice(String username) {
+        List<Cart> cartList = getCartItems(username);
+        return cartList.stream()
+                .mapToInt(c -> c.getPrice() * c.getQuantity())
+                .sum();
+    }
+
+    /** 총 수량(username 기반) */
+    public int getTotalQuantity(String username) {
+        List<Cart> cartList = getCartItems(username);
+        return cartList.stream()
+                .mapToInt(Cart::getQuantity)
+                .sum();
+    }
 }
