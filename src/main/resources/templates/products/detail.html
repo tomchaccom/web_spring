@@ -54,9 +54,12 @@
         주문하기
       </a>
 
-      <a href="#" class="btn btn-warning btn-lg text-white">
-        장바구니 담기
-      </a>
+      <!-- 장바구니 담기 버튼 -->
+      <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post" style="display:inline;">
+        <button type="submit" class="btn btn-warning btn-lg text-white">
+          🛒 장바구니 담기
+        </button>
+      </form>
 
       <form th:action="@{/products/wish(id=${product.id})}" method="post">
         <button type="submit" class="btn btn-outline-danger btn-lg">
