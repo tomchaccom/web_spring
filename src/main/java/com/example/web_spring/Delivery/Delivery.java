@@ -3,9 +3,11 @@ package com.example.web_spring.Delivery;
 import com.example.web_spring.Order.Order;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Delivery {
 
     @Id
@@ -21,5 +23,29 @@ public class Delivery {
 
     @Enumerated(EnumType.STRING)
     private DeliveryState state;
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+    public void setState(DeliveryState state) {
+        this.state = state;
+    }
+
+    public static Delivery create(Order order, String address) {
+        Delivery delivery = new Delivery();
+        delivery.order = order;
+        delivery.address = address;
+        delivery.trackingNo = "준비중";
+        delivery.state = DeliveryState.READY;
+        return delivery;
+    }
+
+    /** 비즈니스 생성자 */
+    public Delivery(Order order, String trackingNo, String address, DeliveryState state) {
+        this.order = order;
+        this.trackingNo = trackingNo;
+        this.address = address;
+        this.state = state;
+    }
 }
 

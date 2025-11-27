@@ -7,10 +7,21 @@ import com.example.web_spring.Category.Category;
 import com.example.web_spring.Category.CategoryRepository;
 import com.example.web_spring.Product.Product;
 import com.example.web_spring.Product.ProductRepository;
+import com.example.web_spring.Order.Order;
+import com.example.web_spring.Order.OrderRepository;
+import com.example.web_spring.Order.OrderStatus;
+import com.example.web_spring.OrderItem.OrderItem;
+import com.example.web_spring.OrderItem.OrderItemRepository;
+import com.example.web_spring.Delivery.Delivery;
+import com.example.web_spring.Delivery.DeliveryRepository;
+import com.example.web_spring.Delivery.DeliveryState;
+import com.example.web_spring.Payment.PaymentMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -19,6 +30,11 @@ public class DataInitializer implements CommandLineRunner {
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final DeliveryRepository deliveryRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -35,9 +51,7 @@ public class DataInitializer implements CommandLineRunner {
                     .phone("010-0000-0000")
                     .role(Role.ROLE_ADMIN)
                     .build();
-
             memberRepository.save(admin);
-            System.out.println("✅ 관리자 계정 생성 완료 (admin / 1234)");
         }
 
         if (memberRepository.findByUsername("user").isEmpty()) {
@@ -48,19 +62,18 @@ public class DataInitializer implements CommandLineRunner {
                     .phone("010-1111-1111")
                     .role(Role.ROLE_USER)
                     .build();
-
             memberRepository.save(user);
-            System.out.println("✅ 사용자 계정 생성 완료 (user / 1234)");
         }
+
 
         // -----------------------
         // 2. 카테고리 생성
         // -----------------------
         if (categoryRepository.count() == 0) {
-            Category laptop = categoryRepository.save(new Category("노트북"));
-            Category phone = categoryRepository.save(new Category("스마트폰"));
-            Category monitor = categoryRepository.save(new Category("모니터"));
-            Category accessory = categoryRepository.save(new Category("악세서리"));
+            categoryRepository.save(new Category("노트북"));
+            categoryRepository.save(new Category("스마트폰"));
+            categoryRepository.save(new Category("모니터"));
+            categoryRepository.save(new Category("악세서리"));
 
             System.out.println("✅ 기본 카테고리 생성 완료");
         }
@@ -119,17 +132,64 @@ public class DataInitializer implements CommandLineRunner {
                     .description("노이즈 캔슬링 무선 이어폰")
                     .imageUrl("/images/airpods.jpg")
                     .stock(30)
-                    .category(accessory)   // 악세서리 카테고리
+                    .category(accessory)
                     .build();
 
+            productRepository.saveAll(List.of(p1, p2, p3, p4, p5));
+        }
 
-            productRepository.save(p1);
-            productRepository.save(p2);
-            productRepository.save(p3);
-            productRepository.save(p4);
-            productRepository.save(p5);
 
-            System.out.println("✅ 상품 더미 데이터 생성 완료");
+        // -----------------------
+        // 4. 주문 더미 데이터 생성
+        // -----------------------
+        Member user = memberRepository.findByUsername("user").orElse(null);
+
+        if (user != null && orderRepository.count() == 0) {
+
+            Product phoneProduct = productRepository.findByName("아이폰 15").orElse(null);
+            Product macProduct = productRepository.findByName("맥북 프로").orElse(null);
+
+            // ===== 1) 배송완료 주문 생성 =====
+            Order order1 = new Order(
+                    user,
+                    "홍길동",
+                    "010-2222-2222",
+                    "서울시 강남구 테헤란로 101",
+                    1200000,
+                    PaymentMethod.CARD,
+                    OrderStatus.PAYMENT_COMPLETED
+            );
+
+            OrderItem item1 = new OrderItem(order1, phoneProduct, 1, phoneProduct.getPrice());
+            order1.addOrderItem(item1);
+
+            Delivery d1 = new Delivery(order1, "111-222-333", "서울시 강남구 테헤란로 101", DeliveryState.DELIVERED);
+            order1.setDelivery(d1);
+
+            orderRepository.save(order1);
+
+
+
+            // ===== 2) 주문취소 주문 생성 =====
+            Order order2 = new Order(
+                    user,
+                    "홍길동",
+                    "010-2222-2222",
+                    "서울시 강남구 테헤란로 101",
+                    3200000,
+                    PaymentMethod.CARD,
+                    OrderStatus.DELIVERED
+            );
+
+            OrderItem item2 = new OrderItem(order2, macProduct, 1, macProduct.getPrice());
+            order2.addOrderItem(item2);
+
+            Delivery d2 = new Delivery(order2, "준비중", "서울시 강남구 테헤란로 101", DeliveryState.READY);
+            order2.setDelivery(d2);
+
+            orderRepository.save(order2);
+
+            System.out.println("✅ 더미 주문 데이터 2건 생성 완료 (배송완료 + 주문취소)");
         }
     }
 }

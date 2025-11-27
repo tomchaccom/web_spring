@@ -1,9 +1,21 @@
 package com.example.web_spring.Delivery;
 
-// 배송 상태 Enum
-enum DeliveryState {
-    PENDING, // 배송 대기
-    PREPARING, // 상품준비
-    SHIPPING, // 배송증
-    COMPLETED // 배송완료
+import lombok.Getter;
+
+@Getter
+public enum DeliveryState {
+
+    READY("배송준비중", "secondary"),
+    SHIPPING("배송중", "info"),
+    DELIVERED("배송완료", "success"),
+    RETURN_REQUESTED("반품요청", "warning"),
+    RETURNED("반품완료", "primary");
+
+    private final String korean;
+    private final String badgeClass;
+
+    DeliveryState(String korean, String badgeClass) {
+        this.korean = korean;
+        this.badgeClass = badgeClass;
+    }
 }
