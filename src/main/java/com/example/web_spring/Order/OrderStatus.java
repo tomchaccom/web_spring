@@ -27,7 +27,7 @@ public enum OrderStatus {
             case PAYMENT_COMPLETED -> "success";
             case PREPARING_SHIPMENT -> "info";
             case SHIPPING -> "primary";
-            case DELIVERED -> "dark";
+            case DELIVERED -> "light";
             case CANCELED -> "danger";
             case REFUNDED -> "warning";
         };

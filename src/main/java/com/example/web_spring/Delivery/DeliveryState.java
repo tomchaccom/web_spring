@@ -9,7 +9,7 @@ public enum DeliveryState {
     SHIPPING("배송중", "info"),
     DELIVERED("배송완료", "success"),
     RETURN_REQUESTED("반품요청", "warning"),
-    RETURNED("반품완료", "dark");
+    RETURNED("반품완료", "primary");
 
     private final String korean;
     private final String badgeClass;

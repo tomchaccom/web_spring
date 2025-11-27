@@ -59,6 +59,23 @@ public class Order {
             this.status = OrderStatus.PAYMENT_PENDING;
         }
     }
+    public Order(Member member,
+                 String receiver,
+                 String phoneNumber,
+                 String address,
+                 int totalPrice,
+                 PaymentMethod paymentMethod,
+                 OrderStatus status) {
+
+        this.member = member;
+        this.receiver = receiver;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.totalPrice = totalPrice;
+        this.paymentMethod = paymentMethod;
+        this.status = status;
+        this.orderDate = LocalDateTime.now();
+    }
 
 
     //== 생성 메서드 ==//
