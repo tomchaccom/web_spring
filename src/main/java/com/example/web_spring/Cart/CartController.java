@@ -17,6 +17,10 @@ public class CartController {
     @GetMapping("/cart")
     public String cartPage(Model model, Principal principal) {
 
+        if (principal != null) {
+            model.addAttribute("userName", principal.getName());
+        }
+
         var items = cartService.getCartItems(principal.getName());
 
         model.addAttribute("cartItems", items);
