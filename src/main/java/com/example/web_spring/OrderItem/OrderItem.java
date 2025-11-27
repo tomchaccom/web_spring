@@ -26,4 +26,16 @@ public class OrderItem {
 
     private int quantity;
     private int price;
+
+    public static OrderItem create(Product product, int quantity, int price) {
+        OrderItem item = new OrderItem();
+        item.product = product;
+        item.quantity = quantity;
+        item.price = price;
+        return item;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 }

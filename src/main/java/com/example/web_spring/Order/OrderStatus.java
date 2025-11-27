@@ -1,6 +1,6 @@
 package com.example.web_spring.Order;
 
-enum OrderStatus {
+public enum OrderStatus {
     PAYMENT_PENDING, // 결제전
     PAYMENT_COMPLETED, // 결제완료
     PREPARING_SHIPMENT, // 상품준비

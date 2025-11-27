@@ -106,4 +106,14 @@ public class CartService {
                 .mapToInt(Cart::getQuantity)
                 .sum();
     }
+    @Transactional
+    public void clearCart(String username) {
+
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+
+        List<Cart> cartItems = cartRepository.findByMember(member);
+
+        cartRepository.deleteAll(cartItems);
+    }
 }
