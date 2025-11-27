@@ -157,7 +157,7 @@ public class DataInitializer implements CommandLineRunner {
                     "서울시 강남구 테헤란로 101",
                     1200000,
                     PaymentMethod.CARD,
-                    OrderStatus.DELIVERED
+                    OrderStatus.PAYMENT_COMPLETED
             );
 
             OrderItem item1 = new OrderItem(order1, phoneProduct, 1, phoneProduct.getPrice());
@@ -178,7 +178,7 @@ public class DataInitializer implements CommandLineRunner {
                     "서울시 강남구 테헤란로 101",
                     3200000,
                     PaymentMethod.CARD,
-                    OrderStatus.CANCELED
+                    OrderStatus.DELIVERED
             );
 
             OrderItem item2 = new OrderItem(order2, macProduct, 1, macProduct.getPrice());

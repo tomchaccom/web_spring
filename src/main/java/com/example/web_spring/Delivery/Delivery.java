@@ -27,6 +27,9 @@ public class Delivery {
     public void setOrder(Order order) {
         this.order = order;
     }
+    public void setState(DeliveryState state) {
+        this.state = state;
+    }
 
     public static Delivery create(Order order, String address) {
         Delivery delivery = new Delivery();

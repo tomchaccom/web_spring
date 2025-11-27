@@ -70,4 +70,16 @@ public class OrderController {
 
         return "redirect:/mypage/orders";
     }
+
+    @PostMapping("/order/refund/{id}")
+    public String refundOrder(
+            @PathVariable Long id,
+            Principal principal) {
+
+        String username = principal.getName();
+        orderService.refundOrder(id, username);
+
+        return "redirect:/mypage/orders";
+    }
+
 }

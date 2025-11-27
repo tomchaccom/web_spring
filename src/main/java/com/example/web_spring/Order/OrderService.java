@@ -3,6 +3,7 @@ package com.example.web_spring.Order;
 import com.example.web_spring.Cart.Cart;
 import com.example.web_spring.Cart.CartService;
 import com.example.web_spring.Delivery.Delivery;
+import com.example.web_spring.Delivery.DeliveryState;
 import com.example.web_spring.Member.Member;
 import com.example.web_spring.Member.MemberRepository;
 import com.example.web_spring.OrderItem.OrderItem;
@@ -114,5 +115,28 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELED);
     }
+
+    @Transactional
+    public void refundOrder(Long orderId, String username) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+
+        if (!order.getMember().getUsername().equals(username)) {
+            throw new IllegalStateException("본인의 주문만 반품할 수 있습니다.");
+        }
+
+        // 배송완료 상태에서만 반품 가능
+        if (order.getStatus() != OrderStatus.DELIVERED) {
+            throw new IllegalStateException("배송완료 상태에서만 반품 요청이 가능합니다.");
+        }
+
+        // 배송 상태 변경
+        order.getDelivery().setState(DeliveryState.RETURN_REQUESTED);
+
+        // 주문 상태 변경
+        order.setStatus(OrderStatus.REFUNDED);
+    }
+
 
 }
