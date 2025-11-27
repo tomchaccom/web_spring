@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,6 +22,16 @@ public class GlobalController {
         if (principal != null) {
             model.addAttribute("userName", principal.getName());
         }
+
+        List<ProductDto> dummyProducts = List.of(
+                new ProductDto(1L, "아이폰 15", 1200000, "images/iphone.png"),
+                new ProductDto(2L, "맥북 프로", 3200000, "/images/macbook.jpeg"),
+                new ProductDto(3L, "갤럭시 S24", 1100000, "/images/galaxy.jpeg"),
+                new ProductDto(4L, "LG 모니터", 450000, "/images/monitor.jpg")
+        );
+
+        model.addAttribute("products", dummyProducts);
+
         return "main"; // 메인 뷰
     }
 

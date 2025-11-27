@@ -2,11 +2,19 @@ package com.example.web_spring.Product;
 
 import com.example.web_spring.Category.Category;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
 public class Product {
 
     @Id

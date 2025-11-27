@@ -25,6 +25,19 @@
             padding: 1rem;
             border-radius: 0.5rem;
         }
+
+        /* 추천 상품 카드 hover 효과 */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* 추천 상품 카드 이미지 크기 통일 */
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -76,23 +89,25 @@
                 <div class="card-body">
                     <h5 class="card-title" th:text="${product.name}">상품명</h5>
                     <p class="card-text" th:text="${product.price} + '원'">가격</p>
-                    <a th:href="@{/product/{id}(id=${product.id})}" class="btn btn-primary w-100">상세보기</a>
+                    <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-primary w-100">상세보기</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 카테고리 섹션 -->
-<div class="container mt-5">
+<!-- 카테고리 섹션 --><div class="container mt-5">
     <h3>카테고리</h3>
     <div class="d-flex flex-wrap gap-3 mt-2">
-        <a href="/category/laptop" class="btn btn-outline-secondary">노트북</a>
-        <a href="/category/phone" class="btn btn-outline-secondary">스마트폰</a>
-        <a href="/category/tv" class="btn btn-outline-secondary">TV</a>
-        <a href="/category/accessory" class="btn btn-outline-secondary">악세서리</a>
+
+        <a th:href="@{/products(query='노트북')}" class="btn btn-outline-secondary">노트북</a>
+        <a th:href="@{/products(query='스마트폰')}" class="btn btn-outline-secondary">스마트폰</a>
+        <a th:href="@{/products(query='모니터')}" class="btn btn-outline-secondary">모니터</a>
+        <a th:href="@{/products(query='악세서리')}" class="btn btn-outline-secondary">악세서리</a>
+
     </div>
 </div>
+
 
 <!-- 푸터 -->
 <footer class="bg-dark text-light text-center py-4 mt-5">
