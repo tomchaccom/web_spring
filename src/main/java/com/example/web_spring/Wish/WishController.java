@@ -42,5 +42,11 @@ public class WishController {
 
         return "products/wish-list"; // 생성 예정 템플릿
     }
+
+    @PostMapping("/products/{id}/wish/delete")
+    public String deleteWish(@PathVariable Long id, Principal principal) {
+        wishService.removeWish(id, principal.getName());
+        return "redirect:/wish";
+    }
 }
 

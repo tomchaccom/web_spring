@@ -7,6 +7,7 @@ import com.example.web_spring.Product.ProductRepository;
 import com.example.web_spring.Product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class WishService {
     private final ProductRepository productRepository;
     private final ProductService productService;
 
-
+    @Transactional
     public void addWishList(Long productId, String username) {
         Product product = productService.getProductById(productId);
 
@@ -35,8 +36,19 @@ public class WishService {
         wishRepository.save(wish);
     }
 
+    @Transactional(readOnly = true)
     public List<Wish> getWishList(String username) {
         return wishRepository.findByMemberUsername(username);
     }
 
+    @Transactional
+    public void removeWish(Long productId, String username) {
+        Member member = memberRepository.findByUsername(username).orElseThrow(
+                () -> new IllegalArgumentException("<UNK> <UNK> <UNK>" + username)
+        );
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품 없음"));
+
+        wishRepository.deleteByMemberAndProduct(member, product);
+    }
 }

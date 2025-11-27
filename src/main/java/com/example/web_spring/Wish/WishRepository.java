@@ -11,4 +11,5 @@ import java.util.List;
 public interface WishRepository extends JpaRepository<Wish, Long> {
     List<Wish> findByMemberUsername(String username);
     boolean existsByMemberAndProduct(Member member, Product product);
+    void deleteByMemberAndProduct(Member member, Product product);
 }
