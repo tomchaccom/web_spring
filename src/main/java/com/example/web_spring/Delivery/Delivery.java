@@ -21,5 +21,18 @@ public class Delivery {
 
     @Enumerated(EnumType.STRING)
     private DeliveryState state;
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public static Delivery create(Order order, String address) {
+        Delivery delivery = new Delivery();
+        delivery.order = order;
+        delivery.address = address;
+        delivery.trackingNo = "준비중";
+        delivery.state = DeliveryState.READY;
+        return delivery;
+    }
 }
 

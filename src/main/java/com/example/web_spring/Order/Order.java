@@ -1,4 +1,5 @@
 package com.example.web_spring.Order;
+import com.example.web_spring.Delivery.Delivery;
 import com.example.web_spring.Member.Member;
 import com.example.web_spring.OrderItem.OrderItem;
 import com.example.web_spring.Payment.PaymentMethod;
@@ -48,6 +49,8 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Delivery delivery;
 
     @PrePersist
     public void prePersist() {
@@ -78,5 +81,13 @@ public class Order {
     public void addOrderItem(OrderItem item) {
         this.orderItems.add(item);
         item.setOrder(this);
+    }
+
+    protected void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
     }
 }

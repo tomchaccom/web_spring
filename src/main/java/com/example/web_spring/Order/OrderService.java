@@ -2,6 +2,7 @@ package com.example.web_spring.Order;
 
 import com.example.web_spring.Cart.Cart;
 import com.example.web_spring.Cart.CartService;
+import com.example.web_spring.Delivery.Delivery;
 import com.example.web_spring.Member.Member;
 import com.example.web_spring.Member.MemberRepository;
 import com.example.web_spring.OrderItem.OrderItem;
@@ -44,47 +45,74 @@ public class OrderService {
     @Transactional
     public Long completeOrder(String username, PaymentMethod method) {
 
-        // 1) 회원 조회
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
 
-        // 2) 임시 주문 조회 (배송지 정보)
-        TemporaryOrder temp = temporaryOrderRepository.findTopByMemberOrderByIdDesc(member)
-                .orElseThrow(() -> new IllegalStateException("임시 주문 정보가 없습니다."));
+        TemporaryOrder temp = temporaryOrderRepository.findByMember(member)
+                .orElseThrow(() -> new IllegalArgumentException("임시 주문 정보가 없습니다."));
 
-        // 3) 장바구니 목록 조회
         List<Cart> cartItems = cartService.getCartItems(username);
 
-        // 4) 총 금액 계산
-        int totalPrice = cartItems.stream()
-                .mapToInt(item -> item.getPrice() * item.getQuantity())
-                .sum();
+        int totalPrice = cartService.getTotalPrice(cartItems);
 
-        // 5) 본 주문(Order) 생성
-        Order order = Order.create(member, temp, totalPrice, method);
+        // 🔥 주문 생성
+        Order order = Order.create(member,temp,totalPrice, method);
 
-        // 6) 각 장바구니 상품을 OrderItem으로 변환
+        // 🔥 주문 상품(OrderItem) 추가
         for (Cart cart : cartItems) {
-
             OrderItem item = OrderItem.create(
                     cart.getProduct(),
                     cart.getQuantity(),
                     cart.getPrice()
             );
-
-            order.addOrderItem(item); // order와 item의 양방향 설정
+            order.addOrderItem(item);
         }
 
-        // 7) DB 저장
+        // 🔥 배송정보 생성 & 주문에 연결
+        Delivery delivery = Delivery.create(order, temp.getAddress());
+        order.setDelivery(delivery);
+
+        // 저장
         orderRepository.save(order);
 
-        // 8) 장바구니 비우기
+        // 장바구니 비우기
         cartService.clearCart(username);
 
-        // 9) 임시 주문 삭제
+        // 임시 주문 삭제
         temporaryOrderRepository.delete(temp);
 
         return order.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public Order findOrderById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+    }
+
+    public List<Order> findOrdersByUsername(String username) {
+
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+
+        return orderRepository.findByMemberOrderByIdDesc(member);
+    }
+
+    @Transactional
+    public void cancelOrder(Long orderId, String username) {
+
+        Order order = findOrderById(orderId);
+
+        if (!order.getMember().getUsername().equals(username)) {
+            throw new IllegalArgumentException("본인의 주문만 취소할 수 있습니다.");
+        }
+
+        if (order.getStatus() == OrderStatus.SHIPPING ||
+                order.getStatus() == OrderStatus.DELIVERED) {
+            throw new IllegalStateException("배송 중이거나 배송 완료된 주문은 취소할 수 없습니다.");
+        }
+
+        order.setStatus(OrderStatus.CANCELED);
     }
 
 }

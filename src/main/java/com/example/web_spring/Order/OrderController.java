@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -35,5 +37,37 @@ public class OrderController {
         orderService.saveTemporaryOrder(form, username);
 
         return "redirect:/payment";
+    }
+
+    @GetMapping("/order/complete/{id}")
+    public String orderComplete(@PathVariable Long id, Model model, Principal principal) {
+
+        Order order = orderService.findOrderById(id);
+
+        model.addAttribute("order", order);
+        model.addAttribute("userName", principal.getName());
+
+        return "order/order_complete";
+    }
+
+    @GetMapping("/mypage/orders")
+    public String myOrders(Model model, Principal principal) {
+
+        String username = principal.getName();
+
+        List<Order> orders = orderService.findOrdersByUsername(username);
+
+        model.addAttribute("orders", orders);
+        model.addAttribute("userName", username);
+
+        return "mypage/order_list";
+    }
+
+    @PostMapping("/order/cancel/{id}")
+    public String cancelOrder(@PathVariable Long id, Principal principal) {
+
+        orderService.cancelOrder(id, principal.getName());
+
+        return "redirect:/mypage/orders";
     }
 }
