@@ -8,6 +8,7 @@ import com.example.web_spring.Member.Member;
 import com.example.web_spring.Member.MemberRepository;
 import com.example.web_spring.OrderItem.OrderItem;
 import com.example.web_spring.Payment.PaymentMethod;
+import com.example.web_spring.Product.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,8 +62,14 @@ public class OrderService {
 
         // 🔥 주문 상품(OrderItem) 추가
         for (Cart cart : cartItems) {
+
+            Product product = cart.getProduct();
+
+            // 🔥 재고 차감 필요
+            product.reduceStock(cart.getQuantity());
+
             OrderItem item = OrderItem.create(
-                    cart.getProduct(),
+                    product,
                     cart.getQuantity(),
                     cart.getPrice()
             );
