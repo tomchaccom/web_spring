@@ -72,10 +72,16 @@
     <div class="mt-4 d-flex gap-3 flex-wrap">
 
       <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
-        <button type="submit" class="btn btn-warning btn-lg text-white">
+        <button type="submit"
+                class="btn btn-warning btn-lg text-white"
+                th:disabled="${product.stock == 0}">
           🛒 장바구니 담기
         </button>
       </form>
+      <p th:if="${product.stock == 0}" class="text-danger mt-2">
+        현재 재고가 부족하여 장바구니에 담을 수 없습니다.
+      </p>
+
 
       <form th:action="@{/products/wish(id=${product.id})}" method="post">
         <button type="submit" class="btn btn-outline-danger btn-lg">
