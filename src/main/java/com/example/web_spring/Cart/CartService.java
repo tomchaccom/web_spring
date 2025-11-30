@@ -27,9 +27,9 @@ public class CartService {
     }
 
     /** 총 금액 */
-    public int getTotalPrice(List<Cart> cartList) {
+    public Long getTotalPrice(List<Cart> cartList) {
         return cartList.stream()
-                .mapToInt(c -> c.getPrice() * c.getQuantity())
+                .mapToLong(c -> c.getPrice() * c.getQuantity())
                 .sum();
     }
 
@@ -42,14 +42,25 @@ public class CartService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
 
+        // 1) 재고 검사 — 최초 담기
+        if (product.getStock() < 1) {
+            throw new IllegalStateException("재고가 부족하여 장바구니에 담을 수 없습니다.");
+        }
+
         cartRepository.findByMemberAndProduct(member, product)
                 .ifPresentOrElse(
-                        Cart::addQuantity,
+                        cart -> {
+                            // 2) 이미 장바구니에 있을 경우 → 증가 시 검사
+                            if (product.getStock() < cart.getQuantity() + 1) {
+                                throw new IllegalStateException("재고보다 많은 수량을 담을 수 없습니다.");
+                            }
+                            cart.addQuantity();
+                        },
                         () -> cartRepository.save(new Cart(member, product, 1, product.getPrice()))
                 );
     }
 
-    /** 수량 증가 */
+
     @Transactional
     public void increaseQuantity(Long productId, String username) {
 
@@ -61,8 +72,14 @@ public class CartService {
         Cart cart = cartRepository.findByMemberAndProduct(member, product)
                 .orElseThrow(() -> new IllegalArgumentException("장바구니에 해당 상품이 없습니다."));
 
+        // 재고 검사
+        if (product.getStock() <= cart.getQuantity()) {
+            throw new IllegalStateException("재고보다 많은 수량은 담을 수 없습니다.");
+        }
+
         cart.addQuantity();
     }
+
 
     /** 수량 감소 */
     @Transactional
@@ -92,18 +109,18 @@ public class CartService {
     }
 
     /** 총 금액(username 기반) */
-    public int getTotalPrice(String username) {
+    public Long getTotalPrice(String username) {
         List<Cart> cartList = getCartItems(username);
         return cartList.stream()
-                .mapToInt(c -> c.getPrice() * c.getQuantity())
+                .mapToLong(c -> c.getPrice() * c.getQuantity())
                 .sum();
     }
 
     /** 총 수량(username 기반) */
-    public int getTotalQuantity(String username) {
+    public Long getTotalQuantity(String username) {
         List<Cart> cartList = getCartItems(username);
         return cartList.stream()
-                .mapToInt(Cart::getQuantity)
+                .mapToLong(Cart::getQuantity)
                 .sum();
     }
     @Transactional
