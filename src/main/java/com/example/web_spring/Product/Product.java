@@ -40,4 +40,12 @@ public class Product {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
+    public void reduceStock(int qty) {
+        if (this.stock < qty) {
+            throw new IllegalStateException("재고가 부족합니다.");
+        }
+        this.stock -= qty;
+    }
+
 }
