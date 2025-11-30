@@ -90,4 +90,10 @@ public class MemberService {
         return new GetUserInfoDto(member);
 
     }
+
+    @Transactional(readOnly = true)
+    public Member findByUsername(String username) {
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+    }
 }
