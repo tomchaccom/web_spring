@@ -1,6 +1,7 @@
 package com.example.web_spring;
 
 import com.example.web_spring.Member.CustomUserDetailsService;
+import com.example.web_spring.global.CustomLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
+    private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -59,8 +61,8 @@ public class SecurityConfig {
                 // ★ 로그인 설정
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                        .failureHandler(customFailureHandler()) // ★ 여기만 변경!
+                        .successHandler(customLoginSuccessHandler) // ★ 관리자 리다이렉트 적용
+                        .failureHandler(customFailureHandler())
                         .permitAll()
                 )
 
