@@ -81,6 +81,10 @@ public class GlobalController {
     }
     @GetMapping("/mypage/inquiries")
     public String myInquiries(Model model, Principal principal) {
+        if (principal != null) {
+            model.addAttribute("userName", principal.getName());
+        }
+
         List<Inquiry> inquiries = inquiryService.getMyInquiries(principal.getName());
         model.addAttribute("inquiries", inquiries);
 
