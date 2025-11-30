@@ -28,7 +28,7 @@ public class Order {
     private Member member;
 
     // 총 금액
-    private int totalPrice;
+    private Long totalPrice;
 
     // 주문 날짜
     private LocalDateTime orderDate;
@@ -64,7 +64,7 @@ public class Order {
                  String receiver,
                  String phoneNumber,
                  String address,
-                 int totalPrice,
+                 Long totalPrice,
                  PaymentMethod paymentMethod,
                  OrderStatus status) {
 
@@ -82,7 +82,7 @@ public class Order {
     //== 생성 메서드 ==//
     public static Order create(Member member,
                                TemporaryOrder temp,
-                               int totalPrice,
+                               Long totalPrice,
                                PaymentMethod method) {
 
         Order order = new Order();
@@ -112,7 +112,7 @@ public class Order {
     public static Order createSingleProductOrder(Member member,
                                                  Product product,
                                                  int quantity,
-                                                 int totalPrice,
+                                                 Long totalPrice,
                                                  PaymentMethod method) {
 
         Order order = new Order();

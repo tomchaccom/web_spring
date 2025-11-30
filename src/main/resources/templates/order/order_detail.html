@@ -64,9 +64,16 @@
             <tbody>
             <tr th:each="item : ${order.orderItems}">
                 <td th:text="${item.product.name}"></td>
-                <td th:text="${#numbers.formatInteger(item.price,3,'COMMA')} + '원'"></td>
+
+                <!-- ✔ 2번째 줄: 상품의 단가(가격) -->
+                <td th:text="${#numbers.formatInteger(item.product.price, 3, 'COMMA')} + '원'"></td>
+
+                <!-- ✔ 3번째 줄: 수량 -->
                 <td th:text="${item.quantity}"></td>
-                <td th:text="${#numbers.formatInteger(item.price * item.quantity,3,'COMMA')} + '원'"></td>
+
+                <!-- ✔ 4번째 줄: 단가 × 수량 -->
+                <td th:text="${#numbers.formatInteger((item.product.price * item.quantity), 3, 'COMMA')} + '원'"></td>
+
             </tr>
             </tbody>
         </table>
