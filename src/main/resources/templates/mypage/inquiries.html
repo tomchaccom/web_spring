@@ -19,22 +19,41 @@
 
   <div class="list-group">
     <div class="list-group-item" th:each="inquiry : ${inquiries}">
+      <!-- 제목 -->
       <strong th:text="${inquiry.title}"></strong>
+
+      <!-- 내용 -->
       <p th:text="${inquiry.content}"></p>
 
+      <!-- 이미지 -->
       <img th:if="${inquiry.imagePath != null}"
            th:src="${inquiry.imagePath}"
            class="img-fluid rounded mb-2"
            style="max-width: 200px;">
 
+      <!-- 작성일 -->
       <small class="text-muted"
              th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
 
-      <div class="mt-2 text-end">
+      <!-- 🔥 관리자 답변 블록 -->
+      <div class="mt-3 p-3 border rounded bg-light">
+        <strong>📌 관리자 답변</strong>
+
+        <p class="mt-2" th:if="${inquiry.answer != null}"
+           th:text="${inquiry.answer}"></p>
+
+        <p class="text-muted mt-2" th:if="${inquiry.answer == null}">
+          아직 답변이 등록되지 않았습니다.
+        </p>
+      </div>
+
+      <!-- 삭제 버튼 -->
+      <div class="mt-3 text-end">
         <form th:action="@{/inquiry/{id}/delete(id=${inquiry.id})}" method="post">
           <button class="btn btn-sm btn-danger">삭제</button>
         </form>
       </div>
+
     </div>
   </div>
 
