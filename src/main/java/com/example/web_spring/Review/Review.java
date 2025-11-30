@@ -33,6 +33,8 @@ public class Review {
 
     private LocalDateTime createdAt; // 생성 일시
 
+    private String imagePath;
+
     // Comment와의 관계: 하나의 후기는 여러 개의 댓글을 가질 수 있음
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>(); // 댓글 목록
