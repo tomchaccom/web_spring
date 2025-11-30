@@ -39,6 +39,12 @@
             </span>
         </p>
 
+        <div th:if="${order.delivery.state.name() == 'SHIPPING'}">
+            <form th:action="@{/order/confirm/{id}(id=${order.id})}" method="post">
+                <button class="btn btn-success mt-2">배송완료 확인</button>
+            </form>
+        </div>
+
         <p><strong>배송지:</strong> <span th:text="${order.delivery.address}"></span></p>
 
         <p><strong>총 결제 금액:</strong>
@@ -58,21 +64,15 @@
                 <th>상품명</th>
                 <th>가격</th>
                 <th>수량</th>
-                <th>총 금액</th>
+                <th>총 금액(쿠폰/적립금 사용)</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="item : ${order.orderItems}">
                 <td th:text="${item.product.name}"></td>
-
-                <!-- ✔ 2번째 줄: 상품의 단가(가격) -->
                 <td th:text="${#numbers.formatInteger(item.product.price, 3, 'COMMA')} + '원'"></td>
-
-                <!-- ✔ 3번째 줄: 수량 -->
                 <td th:text="${item.quantity}"></td>
-
-                <!-- ✔ 4번째 줄: 단가 × 수량 -->
-                <td th:text="${#numbers.formatInteger((item.product.price * item.quantity), 3, 'COMMA')} + '원'"></td>
+                <td th:text="${#numbers.formatInteger(order.totalPrice, 3, 'COMMA')} + '원'"></td>
 
             </tr>
             </tbody>

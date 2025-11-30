@@ -2,6 +2,8 @@ package com.example.web_spring.Order;
 
 import com.example.web_spring.Cart.Cart;
 import com.example.web_spring.Cart.CartService;
+import com.example.web_spring.Coupon.Coupon;
+import com.example.web_spring.Coupon.CouponRepository;
 import com.example.web_spring.Member.Member;
 import com.example.web_spring.Member.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +24,14 @@ public class OrderController {
     private final CartService cartService;
     private final OrderService orderService;
     private final MemberService memberService;
+    private final CouponRepository couponRepository;
 
     @GetMapping("/order")
     public String orderForm(Model model, Principal principal) {
 
         String username = principal.getName();
         List<Cart> items = cartService.getCartItems(username);
+        Member member = memberService.findByUsername(username);
 
         // 장바구니 재고 검사
         for (Cart item : items) {
@@ -37,6 +41,9 @@ public class OrderController {
                 return "cart/cart";  // 장바구니 페이지로 되돌리기
             }
         }
+        List<Coupon> coupons = couponRepository.findByMemberAndUsedFalse(member);
+        model.addAttribute("coupons", coupons);
+
 
         model.addAttribute("orderTotal", cartService.getTotalPrice(username));
         model.addAttribute("orderCount", cartService.getTotalQuantity(username));
@@ -64,6 +71,13 @@ public class OrderController {
 
         return "redirect:/order";
     }
+
+    @PostMapping("/order/confirm/{id}")
+    public String confirm(@PathVariable Long id, Principal principal) {
+        orderService.confirmDelivery(id, principal.getName());
+        return "redirect:/order/detail/" + id;
+    }
+
 
 
     @GetMapping("/order/complete/{id}")
