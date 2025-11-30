@@ -19,4 +19,16 @@ public class AdminController {
 
         return "admin/dashboard"; // admin/dashboard.html 렌더링
     }
+
+    // 고객 CS 메인
+    @GetMapping("/admin/cs")
+    public String csMain(Model model, Principal principal) {
+
+        if (principal != null) {
+            model.addAttribute("adminName", principal.getName());
+        }
+
+        return "admin/cs/cs_main"; // 고객 CS 메인 페이지
+    }
+
 }
