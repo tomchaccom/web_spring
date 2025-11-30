@@ -42,6 +42,11 @@ public class Order {
     private String phoneNumber;
     private String address;
 
+    private Long usedCouponId;    // 사용한 쿠폰 ID
+    private int usedPoints;       // 사용한 적립금
+    private int earnedPoints;     // 적립된 적립금 (결제금액의 1%)
+
+
     // 결제 수단
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
@@ -128,5 +133,11 @@ public class Order {
 
         return order;
     }
+    public void setUsedCouponId(Long usedCouponId) { this.usedCouponId = usedCouponId; }
+    public void setUsedPoints(int usedPoints) { this.usedPoints = usedPoints; }
+    public void setEarnedPoints(int earnedPoints) { this.earnedPoints = earnedPoints; }
 
+    public Long getUsedCouponId() { return usedCouponId; }
+    public int getUsedPoints() { return usedPoints; }
+    public int getEarnedPoints() { return earnedPoints; }
 }

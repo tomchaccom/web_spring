@@ -1,5 +1,7 @@
 package com.example.web_spring.Member;
 
+import com.example.web_spring.Coupon.Coupon;
+import com.example.web_spring.Coupon.CouponRepository;
 import com.example.web_spring.Member.Dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +18,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder; // 비밀번호 암호화를 위해 사용
+    private final CouponRepository couponRepository;
 
     @Transactional
     public Long join(MemberJoinDto joinDto) {
@@ -32,6 +35,10 @@ public class MemberService {
                 Role.ROLE_USER
         );
         memberRepository.save(member);
+
+        // ⭐ 회원가입 시 10000원 쿠폰 자동 발급
+        Coupon coupon = new Coupon(member, 10000);
+        couponRepository.save(coupon);
         return member.getId();
     }
 
