@@ -64,9 +64,9 @@
             <tbody>
             <tr th:each="item : ${order.orderItems}">
                 <td th:text="${item.product.name}"></td>
-                <td th:text="${#numbers.formatInteger(item.orderPrice,3,'COMMA')} + '원'"></td>
-                <td th:text="${item.count}"></td>
-                <td th:text="${#numbers.formatInteger(item.orderPrice * item.count,3,'COMMA')} + '원'"></td>
+                <td th:text="${#numbers.formatInteger(item.price,3,'COMMA')} + '원'"></td>
+                <td th:text="${item.quantity}"></td>
+                <td th:text="${#numbers.formatInteger(item.price * item.quantity,3,'COMMA')} + '원'"></td>
             </tr>
             </tbody>
         </table>

@@ -73,9 +73,12 @@
     <!-- 버튼 그룹 -->
     <div class="mt-4 d-flex gap-3 flex-wrap">
 
-      <a th:href="@{/order}" class="btn btn-success btn-lg">
-        🧾 주문하기
-      </a>
+      <form th:action="@{/order/product}" method="post">
+        <input type="hidden" name="productId" th:value="${product.id}">
+        <input type="number" name="quantity" value="1" min="1">
+        <button type="submit" class="btn btn-success btn-lg">🧾 주문하기</button>
+      </form>
+
 
       <!-- 장바구니 -->
       <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">

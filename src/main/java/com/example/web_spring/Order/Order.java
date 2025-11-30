@@ -3,6 +3,7 @@ import com.example.web_spring.Delivery.Delivery;
 import com.example.web_spring.Member.Member;
 import com.example.web_spring.OrderItem.OrderItem;
 import com.example.web_spring.Payment.PaymentMethod;
+import com.example.web_spring.Product.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -107,4 +108,25 @@ public class Order {
     public void setDelivery(Delivery delivery) {
         this.delivery = delivery;
     }
+
+    public static Order createSingleProductOrder(Member member,
+                                                 Product product,
+                                                 int quantity,
+                                                 int totalPrice,
+                                                 PaymentMethod method) {
+
+        Order order = new Order();
+
+        order.member = member;
+        order.orderDate = LocalDateTime.now();
+        order.totalPrice = totalPrice;
+        order.status = OrderStatus.PAYMENT_COMPLETED;   // 즉시 결제
+        order.paymentMethod = method;
+
+        OrderItem orderItem = new OrderItem(order, product, quantity, product.getPrice());
+        order.addOrderItem(orderItem);
+
+        return order;
+    }
+
 }

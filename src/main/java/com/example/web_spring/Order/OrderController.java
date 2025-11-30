@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.List;
@@ -41,6 +42,17 @@ public class OrderController {
 
         return "redirect:/payment";
     }
+
+    @PostMapping("/order/product")
+    public String singleProductOrder(@RequestParam Long productId,
+                                     @RequestParam int quantity,
+                                     Principal principal) {
+
+        orderService.saveSingleProductTemporaryOrder(productId, quantity, principal.getName());
+
+        return "redirect:/order";
+    }
+
 
     @GetMapping("/order/complete/{id}")
     public String orderComplete(@PathVariable Long id, Model model, Principal principal) {
