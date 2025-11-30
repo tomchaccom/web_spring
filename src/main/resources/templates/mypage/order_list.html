@@ -39,21 +39,21 @@
 
         <!-- 주문 상태 뱃지 -->
         <td>
-    <span class="badge px-3 py-2 text-dark"
-          th:class="'badge bg-' + ${order.status.badgeClass} + ' text-dark'"
-          th:text="${order.status.korean}">
-    </span>
+            <span class="badge px-3 py-2"
+                  th:class="'bg-' + ${order.status.badgeClass}"
+                  th:text="${order.status.korean}">
+            </span>
         </td>
 
         <!-- 배송 상태 뱃지 -->
         <td>
-    <span class="badge px-3 py-2 text-dark"
-          th:class="'badge bg-' + ${order.delivery.state.badgeClass} + ' text-dark'"
-          th:text="${order.delivery.state.korean}">
-    </span>
+            <span class="badge px-3 py-2"
+                  th:if="${order.delivery != null}"
+                  th:class="'bg-' + ${order.delivery.state.badgeClass}"
+                  th:text="${order.delivery.state.korean}">
+            </span>
+            <span th:if="${order.delivery == null}" class="text-muted">-</span>
         </td>
-
-
 
         <!-- 관리 버튼 -->
         <td>
@@ -64,15 +64,17 @@
                 상세보기
             </a>
 
-            <!-- 주문 취소 버튼: 배송 전 상태에서만 -->
-            <form th:if="${order.status == T(com.example.web_spring.Order.OrderStatus).PAYMENT_COMPLETED}"
+            <!-- 주문 취소 버튼: 결제 완료 상태에서만 -->
+            <form th:if="${order.status != null
+                          and order.status.name() == 'PAYMENT_COMPLETED'}"
                   th:action="@{/order/cancel/{id}(id=${order.id})}"
                   method="post" class="d-inline">
                 <button class="btn btn-sm btn-danger">주문 취소</button>
             </form>
 
-            <!-- 반품 버튼: 배송완료 상태에서만 -->
-            <form th:if="${order.status == T(com.example.web_spring.Order.OrderStatus).DELIVERED}"
+            <!-- 반품 버튼: 배송 완료 상태에서만 -->
+            <form th:if="${order.status != null
+                          and order.status.name() == 'DELIVERED'}"
                   th:action="@{/order/refund/{id}(id=${order.id})}"
                   method="post" class="d-inline">
                 <button class="btn btn-sm btn-warning text-white">반품</button>
