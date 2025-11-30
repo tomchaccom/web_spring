@@ -29,6 +29,9 @@ public class Member {
     private String phone;
     private Role role; // 권한 (User, Admin 등)
 
+    private int points;   // 적립금 (원 단위)
+
+
     private LocalDateTime createdAt;
 
     @PrePersist
@@ -52,5 +55,9 @@ public class Member {
     protected void changeUserInfo(String email, String phone) {
         this.email = email;
         this.phone = phone;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }

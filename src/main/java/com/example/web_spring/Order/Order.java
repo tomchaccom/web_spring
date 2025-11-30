@@ -3,6 +3,7 @@ import com.example.web_spring.Delivery.Delivery;
 import com.example.web_spring.Member.Member;
 import com.example.web_spring.OrderItem.OrderItem;
 import com.example.web_spring.Payment.PaymentMethod;
+import com.example.web_spring.Product.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,7 @@ public class Order {
     private Member member;
 
     // 총 금액
-    private int totalPrice;
+    private Long totalPrice;
 
     // 주문 날짜
     private LocalDateTime orderDate;
@@ -40,6 +41,11 @@ public class Order {
     private String receiver;
     private String phoneNumber;
     private String address;
+
+    private Long usedCouponId;    // 사용한 쿠폰 ID
+    private int usedPoints;       // 사용한 적립금
+    private int earnedPoints;     // 적립된 적립금 (결제금액의 1%)
+
 
     // 결제 수단
     @Enumerated(EnumType.STRING)
@@ -63,7 +69,7 @@ public class Order {
                  String receiver,
                  String phoneNumber,
                  String address,
-                 int totalPrice,
+                 Long totalPrice,
                  PaymentMethod paymentMethod,
                  OrderStatus status) {
 
@@ -81,7 +87,7 @@ public class Order {
     //== 생성 메서드 ==//
     public static Order create(Member member,
                                TemporaryOrder temp,
-                               int totalPrice,
+                               Long totalPrice,
                                PaymentMethod method) {
 
         Order order = new Order();
@@ -107,4 +113,31 @@ public class Order {
     public void setDelivery(Delivery delivery) {
         this.delivery = delivery;
     }
+
+    public static Order createSingleProductOrder(Member member,
+                                                 Product product,
+                                                 int quantity,
+                                                 Long totalPrice,
+                                                 PaymentMethod method) {
+
+        Order order = new Order();
+
+        order.member = member;
+        order.orderDate = LocalDateTime.now();
+        order.totalPrice = totalPrice;
+        order.status = OrderStatus.PAYMENT_COMPLETED;   // 즉시 결제
+        order.paymentMethod = method;
+
+        OrderItem orderItem = new OrderItem(order, product, quantity, product.getPrice());
+        order.addOrderItem(orderItem);
+
+        return order;
+    }
+    public void setUsedCouponId(Long usedCouponId) { this.usedCouponId = usedCouponId; }
+    public void setUsedPoints(int usedPoints) { this.usedPoints = usedPoints; }
+    public void setEarnedPoints(int earnedPoints) { this.earnedPoints = earnedPoints; }
+
+    public Long getUsedCouponId() { return usedCouponId; }
+    public int getUsedPoints() { return usedPoints; }
+    public int getEarnedPoints() { return earnedPoints; }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
@@ -23,8 +24,13 @@ public class CartController {
 
         var items = cartService.getCartItems(principal.getName());
 
+        boolean stockError = items.stream()
+                .anyMatch(c -> c.getProduct().getStock() < c.getQuantity());
+        model.addAttribute("stockError", stockError);
+
         model.addAttribute("cartItems", items);
         model.addAttribute("totalPrice", cartService.getTotalPrice(items));
+
 
         return "cart/cart";
     }
@@ -38,10 +44,17 @@ public class CartController {
 
     /** 수량 증가 */
     @PostMapping("/cart/plus/{productId}")
-    public String plus(@PathVariable Long productId, Principal principal) {
-        cartService.increaseQuantity(productId, principal.getName());
-        return "redirect:/cart";
+    public String plus(@PathVariable Long productId, Principal principal, RedirectAttributes rttr) {
+        try {
+            cartService.increaseQuantity(productId, principal.getName());
+            return "redirect:/cart";
+
+        } catch (IllegalStateException e) {
+            rttr.addFlashAttribute("stockError", e.getMessage());
+            return "redirect:/cart";
+        }
     }
+
 
     /** 수량 감소 */
     @PostMapping("/cart/minus/{productId}")

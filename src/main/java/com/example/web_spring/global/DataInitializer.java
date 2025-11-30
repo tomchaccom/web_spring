@@ -155,7 +155,7 @@ public class DataInitializer implements CommandLineRunner {
                     "홍길동",
                     "010-2222-2222",
                     "서울시 강남구 테헤란로 101",
-                    1200000,
+                    1200000L,
                     PaymentMethod.CARD,
                     OrderStatus.PAYMENT_COMPLETED
             );
@@ -176,7 +176,7 @@ public class DataInitializer implements CommandLineRunner {
                     "홍길동",
                     "010-2222-2222",
                     "서울시 강남구 테헤란로 101",
-                    3200000,
+                    3200000L,
                     PaymentMethod.CARD,
                     OrderStatus.DELIVERED
             );

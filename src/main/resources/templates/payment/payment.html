@@ -31,9 +31,44 @@
     </div>
   </div>
 
-  <!-- 결제 수단 -->
+  <!-- 결제 폼 -->
   <form th:action="@{/payment}" method="post">
 
+    <!-- 쿠폰 선택 -->
+    <div class="card mb-4">
+      <div class="card-header fw-bold">쿠폰 선택</div>
+      <div class="card-body">
+
+        <select class="form-select" name="couponId">
+          <option value="0">쿠폰 사용 안함</option>
+
+          <option th:each="c : ${coupons}"
+                  th:value="${c.id}"
+                  th:text="${c.discountAmount} + '원 할인 쿠폰 (ID: ' + ${c.id} + ')'">
+          </option>
+        </select>
+
+      </div>
+    </div>
+
+    <!-- 적립금 사용 -->
+    <div class="card mb-4">
+      <div class="card-header fw-bold">적립금 사용</div>
+      <div class="card-body">
+
+        <p>보유 적립금: <strong th:text="${member.points}"></strong> 원</p>
+
+        <input type="number"
+               class="form-control mt-2"
+               name="usedPoints"
+               min="0"
+               th:attr="max=${member.points}"
+               placeholder="사용할 적립금을 입력하세요">
+
+      </div>
+    </div>
+
+    <!-- 결제 수단 -->
     <div class="card mb-4">
       <div class="card-header fw-bold">결제 수단 선택</div>
       <div class="card-body">

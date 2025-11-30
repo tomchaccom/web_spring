@@ -1,5 +1,7 @@
 package com.example.web_spring.global;
 
+import com.example.web_spring.Inquiry.Inquiry;
+import com.example.web_spring.Inquiry.InquiryService;
 import com.example.web_spring.Member.Dto.GetUserInfoDto;
 import com.example.web_spring.Member.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import java.util.List;
 public class GlobalController {
 
     private final MemberService memberService;
+    private final InquiryService inquiryService;
 
 
     @GetMapping("/")
@@ -57,6 +60,10 @@ public class GlobalController {
         }
         GetUserInfoDto dto = memberService.getUserInfo(principal.getName());
 
+
+        List<Inquiry> inquiries = inquiryService.getMyInquiries(principal.getName());
+        model.addAttribute("inquiries", inquiries);
+
         model.addAttribute("username", dto.getUsername());
         model.addAttribute("email", dto.getEmail());
         model.addAttribute("phone", dto.getPhone());
@@ -71,5 +78,12 @@ public class GlobalController {
         }
 
         return "main/mypage-edit";
+    }
+    @GetMapping("/mypage/inquiries")
+    public String myInquiries(Model model, Principal principal) {
+        List<Inquiry> inquiries = inquiryService.getMyInquiries(principal.getName());
+        model.addAttribute("inquiries", inquiries);
+
+        return "mypage/inquiries";
     }
 }

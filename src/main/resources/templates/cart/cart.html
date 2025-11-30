@@ -73,9 +73,20 @@
 
                         <!-- 수량 +1 -->
                         <form th:action="@{/cart/plus/{id}(id=${item.product.id})}" method="post">
-                            <button class="btn btn-outline-secondary btn-sm">+</button>
+                            <button class="btn btn-outline-secondary btn-sm"
+                                    th:disabled="${item.product.stock <= item.quantity}">
+                                +
+                            </button>
                         </form>
+
                     </div>
+
+                    <!-- 🔥 개별 재고 부족 메시지 -->
+                    <p th:if="${item.product.stock <= item.quantity}"
+                       class="text-danger small mt-1">
+                        재고 부족 — 더 이상 추가할 수 없습니다.
+                    </p>
+
                 </td>
 
                 <!-- 총합 -->
@@ -94,7 +105,7 @@
             </tbody>
         </table>
 
-        <!-- 총합 + 주문 버튼 -->
+        <!-- 총합 + 주문 버튼 (장바구니 하단) -->
         <div class="d-flex justify-content-end align-items-center mt-4">
 
             <h4 class="me-4">
@@ -103,9 +114,20 @@
                       th:text="${#numbers.formatInteger(totalPrice, 3, 'COMMA')} + '원'"></span>
             </h4>
 
-            <a href="/order" class="btn btn-success btn-lg">
+            <!-- 🔥 전체 재고 체크: 재고 부족 없음 -->
+            <a th:if="${!stockError}"
+               href="/order"
+               class="btn btn-success btn-lg">
                 주문하기
             </a>
+
+            <!-- 🔥 전체 재고 체크: 재고 부족 있으면 비활성화 -->
+            <button th:if="${stockError}"
+                    class="btn btn-secondary btn-lg"
+                    disabled>
+                재고 부족으로 주문할 수 없습니다.
+            </button>
+
         </div>
 
     </div>

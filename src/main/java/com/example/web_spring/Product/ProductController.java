@@ -1,5 +1,7 @@
 package com.example.web_spring.Product;
 
+import com.example.web_spring.Review.Review;
+import com.example.web_spring.Review.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,7 @@ public class ProductController {
 
     private final ProductRepository productRepository;
     private final ProductService productService;
+    private final ReviewService reviewService;
 
     @GetMapping("/products")
     public String productList(
@@ -45,8 +48,14 @@ public class ProductController {
             model.addAttribute("userName", principal.getName());
         }
 
+        String currentUser = principal != null ? principal.getName() : null;
         Product product = productService.getProductById(id);
+        List<Review> reviews = reviewService.getReviewsByProduct(id);
+
         model.addAttribute("product", product);
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("currentUser", currentUser);
+
         return "products/detail";
     }
 

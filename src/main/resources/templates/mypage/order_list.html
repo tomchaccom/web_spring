@@ -3,85 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <title>주문 내역</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
 </head>
 
-<body class="container mt-5">
+<body>
 
-<h2 class="mb-4">📦 주문 내역</h2>
+<!-- 🔥 공통 헤더 -->
+<div th:replace="fragments/header :: top-utility-bar"></div>
+<div th:replace="fragments/header :: navbar"></div>
 
-<table class="table table-hover text-center align-middle">
-    <thead class="table-dark">
-    <tr>
-        <th>주문번호</th>
-        <th>주문일자</th>
-        <th>상품수</th>
-        <th>결제금액</th>
-        <th>결제상태</th>
-        <th>배송상태</th>
-        <th>관리</th>
-    </tr>
-    </thead>
+<!-- 🔥 페이지 컨테이너 -->
+<div class="container mt-5">
 
-    <tbody>
-    <tr th:each="order : ${orders}">
-        <!-- 주문 번호 -->
-        <td th:text="${order.id}"></td>
+    <h2 class="mb-4">📦 주문 내역</h2>
 
-        <!-- 주문 날짜 -->
-        <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+    <table class="table table-hover text-center align-middle">
+        <thead class="table-dark">
+        <tr>
+            <th>주문번호</th>
+            <th>주문일자</th>
+            <th>상품수</th>
+            <th>결제금액</th>
+            <th>결제상태</th>
+            <th>배송상태</th>
+            <th>관리</th>
+        </tr>
+        </thead>
 
-        <!-- 주문 상품 수 -->
-        <td th:text="${order.orderItems.size()} + '개'"></td>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.id}"></td>
+            <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:text="${order.orderItems.size()} + '개'"></td>
+            <td th:text="${#numbers.formatInteger(order.totalPrice, 3, 'COMMA')} + '원'"></td>
 
-        <!-- 총 결제 금액 -->
-        <td th:text="${#numbers.formatInteger(order.totalPrice, 3, 'COMMA')} + '원'"></td>
+            <td>
+                    <span class="badge px-3 py-2"
+                          th:class="'bg-' + ${order.status.badgeClass}"
+                          th:text="${order.status.korean}">
+                    </span>
+            </td>
 
-        <!-- 주문 상태 뱃지 -->
-        <td>
-    <span class="badge px-3 py-2 text-dark"
-          th:class="'badge bg-' + ${order.status.badgeClass} + ' text-dark'"
-          th:text="${order.status.korean}">
-    </span>
-        </td>
+            <td>
+                    <span class="badge px-3 py-2"
+                          th:if="${order.delivery != null}"
+                          th:class="'bg-' + ${order.delivery.state.badgeClass}"
+                          th:text="${order.delivery.state.korean}">
+                    </span>
+                <span th:if="${order.delivery == null}" class="text-muted">-</span>
+            </td>
 
-        <!-- 배송 상태 뱃지 -->
-        <td>
-    <span class="badge px-3 py-2 text-dark"
-          th:class="'badge bg-' + ${order.delivery.state.badgeClass} + ' text-dark'"
-          th:text="${order.delivery.state.korean}">
-    </span>
-        </td>
+            <td>
+                <a class="btn btn-sm btn-primary me-2"
+                   th:href="@{/order/detail/{id}(id=${order.id})}">
+                    상세보기
+                </a>
 
+                <form th:if="${order.status != null and order.status.name() == 'PAYMENT_COMPLETED'}"
+                      th:action="@{/order/cancel/{id}(id=${order.id})}"
+                      method="post" class="d-inline">
+                    <button class="btn btn-sm btn-danger">주문 취소</button>
+                </form>
 
+                <form th:if="${order.status != null and order.status.name() == 'DELIVERED'}"
+                      th:action="@{/order/refund/{id}(id=${order.id})}"
+                      method="post" class="d-inline">
+                    <button class="btn btn-sm btn-warning text-white">반품</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-        <!-- 관리 버튼 -->
-        <td>
+    <!-- 🛍️ 다시 쇼핑하러 가기 -->
+    <div class="text-center mt-4">
+        <a href="/products" class="btn btn-lg btn-outline-primary">
+            🛍️ 다시 쇼핑하러 가기
+        </a>
+    </div>
 
-            <!-- 상세보기 -->
-            <a class="btn btn-sm btn-primary me-2"
-               th:href="@{/order/detail/{id}(id=${order.id})}">
-                상세보기
-            </a>
-
-            <!-- 주문 취소 버튼: 배송 전 상태에서만 -->
-            <form th:if="${order.status == T(com.example.web_spring.Order.OrderStatus).PAYMENT_COMPLETED}"
-                  th:action="@{/order/cancel/{id}(id=${order.id})}"
-                  method="post" class="d-inline">
-                <button class="btn btn-sm btn-danger">주문 취소</button>
-            </form>
-
-            <!-- 반품 버튼: 배송완료 상태에서만 -->
-            <form th:if="${order.status == T(com.example.web_spring.Order.OrderStatus).DELIVERED}"
-                  th:action="@{/order/refund/{id}(id=${order.id})}"
-                  method="post" class="d-inline">
-                <button class="btn btn-sm btn-warning text-white">반품</button>
-            </form>
-
-        </td>
-    </tr>
-    </tbody>
-</table>
+</div> <!-- container 끝 -->
 
 </body>
 </html>

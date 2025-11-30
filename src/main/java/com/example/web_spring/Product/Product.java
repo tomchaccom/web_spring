@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Product {
 
     @Id
@@ -40,4 +39,17 @@ public class Product {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
+    public void reduceStock(int qty) {
+        if (this.stock < qty) {
+            throw new IllegalStateException("재고가 부족합니다.");
+        }
+        this.stock -= qty;
+    }
+
+    public void increaseStock(int quantity) {
+        this.stock += quantity;
+    }
+
+
 }
