@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>문의 상세</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="container mt-5">
+
+<h2 class="mb-4">📨 문의 상세</h2>
+
+<div class="card mb-4">
+  <div class="card-header fw-bold">
+    문의 내용
+  </div>
+  <div class="card-body">
+    <p><strong>제목:</strong> <span th:text="${inquiry.title}"></span></p>
+    <p><strong>작성자:</strong> <span th:text="${inquiry.member.username}"></span></p>
+    <p><strong>작성일:</strong>
+      <span th:text="${#temporals.format(inquiry.createdAt,'yyyy-MM-dd HH:mm')}"></span>
+    </p>
+    <p><strong>내용:</strong></p>
+    <div class="border p-3 rounded bg-light" th:text="${inquiry.content}"></div>
+
+    <div class="mt-3" th:if="${inquiry.imagePath != null}">
+      <img th:src="${inquiry.imagePath}" class="img-fluid rounded" style="max-width:300px;">
+    </div>
+  </div>
+</div>
+
+<!-- 관리자 답변 -->
+<div class="card">
+  <div class="card-header fw-bold">관리자 답변</div>
+
+  <div class="card-body">
+
+    <!-- 답변 미등록 -->
+    <div th:if="${inquiry.answer == null}">
+      <form th:action="@{/admin/cs/inquiries/{id}/answer(id=${inquiry.id})}" method="post">
+                <textarea name="answer" class="form-control mb-3" rows="4"
+                          placeholder="답변을 입력하세요"></textarea>
+
+        <button class="btn btn-primary w-100">답변 등록</button>
+      </form>
+    </div>
+
+    <!-- 답변 등록됨 -->
+    <div th:if="${inquiry.answer != null}">
+      <p class="border p-3 rounded bg-light" th:text="${inquiry.answer}"></p>
+    </div>
+
+  </div>
+</div>
+
+<a href="/admin/cs/inquiries" class="btn btn-secondary mt-4">← 목록으로</a>
+
+</body>
+</html>

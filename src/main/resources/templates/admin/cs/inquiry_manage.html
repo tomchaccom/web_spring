@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>문의 관리</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="container mt-5">
+
+<h2 class="mb-4">📨 문의 관리</h2>
+
+<table class="table table-bordered text-center">
+  <thead class="table-light">
+  <tr>
+    <th>번호</th>
+    <th>제목</th>
+    <th>작성자</th>
+    <th>작성일</th>
+    <th>답변 여부</th>
+    <th></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr th:each="q : ${inquiries}">
+    <td th:text="${q.id}"></td>
+    <td th:text="${q.title}"></td>
+    <td th:text="${q.member.username}"></td>
+    <td th:text="${#temporals.format(q.createdAt,'yyyy-MM-dd HH:mm')}"></td>
+
+    <td>
+            <span class="badge"
+                  th:classappend="${q.answer == null} ? 'bg-secondary' : 'bg-success'"
+                  th:text="${q.answer == null ? '미답변' : '답변완료'}"></span>
+    </td>
+
+    <td>
+      <a th:href="@{/admin/cs/inquiries/{id}(id=${q.id})}"
+         class="btn btn-primary btn-sm">상세</a>
+    </td>
+  </tr>
+  </tbody>
+
+</table>
+
+<!-- 관리자 메인으로 돌아가기 버튼 -->
+<div class="mb-3">
+  <a href="/admin/dashboard" class="btn btn-secondary mt-3">← 관리자 메인</a>
+</div>
+
+
+</body>
+</html>
