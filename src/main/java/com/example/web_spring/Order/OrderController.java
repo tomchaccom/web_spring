@@ -1,5 +1,6 @@
 package com.example.web_spring.Order;
 
+import com.example.web_spring.Cart.Cart;
 import com.example.web_spring.Cart.CartService;
 import com.example.web_spring.Member.Member;
 import com.example.web_spring.Member.MemberService;
@@ -26,12 +27,23 @@ public class OrderController {
     public String orderForm(Model model, Principal principal) {
 
         String username = principal.getName();
+        List<Cart> items = cartService.getCartItems(username);
+
+        // 장바구니 재고 검사
+        for (Cart item : items) {
+            if (item.getProduct().getStock() < item.getQuantity()) {
+                model.addAttribute("error",
+                        "📦 [" + item.getProduct().getName() + "] 상품의 재고가 부족하여 주문할 수 없습니다.");
+                return "cart/cart";  // 장바구니 페이지로 되돌리기
+            }
+        }
 
         model.addAttribute("orderTotal", cartService.getTotalPrice(username));
         model.addAttribute("orderCount", cartService.getTotalQuantity(username));
 
         return "order/order_form";
     }
+
 
     @PostMapping("/order")
     public String submitOrder(OrderFormDto form, Principal principal) {
