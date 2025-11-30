@@ -1,6 +1,8 @@
 package com.example.web_spring.Order;
 
 import com.example.web_spring.Cart.CartService;
+import com.example.web_spring.Member.Member;
+import com.example.web_spring.Member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,7 @@ public class OrderController {
 
     private final CartService cartService;
     private final OrderService orderService;
+    private final MemberService memberService;
 
     @GetMapping("/order")
     public String orderForm(Model model, Principal principal) {
@@ -54,11 +57,12 @@ public class OrderController {
     public String myOrders(Model model, Principal principal) {
 
         String username = principal.getName();
+        Member member = memberService.findByUsername(username);
 
         List<Order> orders = orderService.findOrdersByUsername(username);
 
         model.addAttribute("orders", orders);
-        model.addAttribute("userName", username);
+        model.addAttribute("userName", member.getUsername());
 
         return "mypage/order_list";
     }
@@ -81,5 +85,23 @@ public class OrderController {
 
         return "redirect:/mypage/orders";
     }
+
+    @GetMapping("/order/detail/{id}")
+    public String orderDetail(@PathVariable Long id,
+                              Principal principal,
+                              Model model) {
+
+        String username = principal.getName();
+        Order order = orderService.findOrderById(id);
+
+        // 본인 주문인지 검증
+        if (!order.getMember().getUsername().equals(username)) {
+            throw new IllegalStateException("본인의 주문만 조회할 수 있습니다.");
+        }
+
+        model.addAttribute("order", order);
+        return "order/order_detail";
+    }
+
 
 }
