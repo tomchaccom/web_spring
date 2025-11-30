@@ -65,7 +65,8 @@ public class OrderService {
                     .orElseThrow(() -> new IllegalArgumentException("상품 없음"));
 
             int qty = temp.getSingleQuantity();
-            int totalPrice = product.getPrice() * qty;
+            Long totalPrice = (long) product.getPrice() * qty;
+
 
             // 재고 차감
             product.reduceStock(qty);
@@ -79,7 +80,7 @@ public class OrderService {
 
             // ⭐ 2) 장바구니 주문
             List<Cart> cartItems = cartService.getCartItems(username);
-            int totalPrice = cartService.getTotalPrice(cartItems);
+            Long totalPrice = cartService.getTotalPrice(cartItems);
 
             order = Order.create(member, temp, totalPrice, method);
 
@@ -138,8 +139,16 @@ public class OrderService {
             throw new IllegalStateException("배송 중이거나 배송 완료된 주문은 취소할 수 없습니다.");
         }
 
+        // ⭐ 1) 재고 복원 로직 추가
+        for (OrderItem item : order.getOrderItems()) {
+            Product product = item.getProduct();
+            product.increaseStock(item.getQuantity());  // stock += quantity
+        }
+
+        // ⭐ 2) 상태 변경
         order.setStatus(OrderStatus.CANCELED);
     }
+
 
     @Transactional
     public void refundOrder(Long orderId, String username) {
@@ -151,7 +160,7 @@ public class OrderService {
             throw new IllegalStateException("본인의 주문만 반품할 수 있습니다.");
         }
 
-        // 배송완료 상태에서만 반품 가능
+        // ⭐ 배송완료 상태에서만 반품 가능
         if (order.getStatus() != OrderStatus.DELIVERED) {
             throw new IllegalStateException("배송완료 상태에서만 반품 요청이 가능합니다.");
         }
@@ -161,6 +170,12 @@ public class OrderService {
 
         // 주문 상태 변경
         order.setStatus(OrderStatus.REFUNDED);
+
+        // ⭐⭐⭐ 재고 복원 로직 추가!
+        for (OrderItem item : order.getOrderItems()) {
+            Product product = item.getProduct();
+            product.increaseStock(item.getQuantity());    // 재고 증가
+        }
     }
 
 

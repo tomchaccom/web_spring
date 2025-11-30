@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Product {
 
     @Id
@@ -47,5 +46,10 @@ public class Product {
         }
         this.stock -= qty;
     }
+
+    public void increaseStock(int quantity) {
+        this.stock += quantity;
+    }
+
 
 }
