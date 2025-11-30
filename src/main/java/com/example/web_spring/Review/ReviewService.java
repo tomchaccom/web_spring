@@ -7,8 +7,12 @@ import com.example.web_spring.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +31,11 @@ public class ReviewService {
     }
 
     /** 후기 작성 */
+    // 예: 사용자 홈폴더에 uploads/reviews 저장
+    private final String uploadDir = System.getProperty("user.home") + "/uploads/reviews/";
+
     @Transactional
-    public void writeReview(Long productId, String username, int rating, String content) {
+    public void writeReview(Long productId, String username, int rating, String content, MultipartFile imageFile) {
 
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
@@ -41,8 +48,32 @@ public class ReviewService {
         review.setRating(rating);
         review.setContent(content);
 
+        // ⭐ 이미지 저장 처리
+        if (imageFile != null && !imageFile.isEmpty()) {
+
+            try {
+                // 디렉토리 없으면 생성
+                File dir = new File(uploadDir);
+                if (!dir.exists()) dir.mkdirs();
+
+                // 저장할 파일명 생성
+                String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+
+                File dest = new File(uploadDir + fileName);
+                imageFile.transferTo(dest);
+
+                // DB에는 URL 형태로 저장
+                review.setImagePath("/uploads/reviews/" + fileName);
+
+            } catch (Exception e) {
+                throw new RuntimeException("이미지 저장 중 오류 발생", e);
+            }
+        }
+
         reviewRepository.save(review);
     }
+
+
 
     /** 후기 삭제 (본인만 가능) */
     @Transactional

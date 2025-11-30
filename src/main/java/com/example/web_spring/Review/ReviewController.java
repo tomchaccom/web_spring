@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -18,11 +21,13 @@ public class ReviewController {
     public String writeReview(@PathVariable Long productId,
                               @RequestParam int rating,
                               @RequestParam String content,
+                              @RequestParam(required = false) MultipartFile imageFile,
                               @AuthenticationPrincipal(expression = "username") String username) {
 
-        reviewService.writeReview(productId, username, rating, content);
-        return "redirect:/products/" + productId; // 상세페이지로 리다이렉트
+        reviewService.writeReview(productId, username, rating, content, imageFile);
+        return "redirect:/products/" + productId;
     }
+
 
     /** 후기 삭제 */
     @PostMapping("/{reviewId}/delete")
