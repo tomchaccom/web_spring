@@ -32,4 +32,13 @@ public class Comment {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
+    public static Comment create(Member member, Review review, String content) {
+        Comment comment = new Comment();
+        comment.member = member;
+        comment.review = review;
+        comment.content = content;
+        return comment;
+    }
+
 }
