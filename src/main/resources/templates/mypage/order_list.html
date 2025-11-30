@@ -25,27 +25,17 @@
 
     <tbody>
     <tr th:each="order : ${orders}">
-        <!-- 주문 번호 -->
         <td th:text="${order.id}"></td>
-
-        <!-- 주문 날짜 -->
         <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
-
-        <!-- 주문 상품 수 -->
         <td th:text="${order.orderItems.size()} + '개'"></td>
-
-        <!-- 총 결제 금액 -->
         <td th:text="${#numbers.formatInteger(order.totalPrice, 3, 'COMMA')} + '원'"></td>
 
-        <!-- 주문 상태 뱃지 -->
         <td>
             <span class="badge px-3 py-2"
                   th:class="'bg-' + ${order.status.badgeClass}"
-                  th:text="${order.status.korean}">
-            </span>
+                  th:text="${order.status.korean}"></span>
         </td>
 
-        <!-- 배송 상태 뱃지 -->
         <td>
             <span class="badge px-3 py-2"
                   th:if="${order.delivery != null}"
@@ -55,35 +45,34 @@
             <span th:if="${order.delivery == null}" class="text-muted">-</span>
         </td>
 
-        <!-- 관리 버튼 -->
         <td>
-
-            <!-- 상세보기 -->
             <a class="btn btn-sm btn-primary me-2"
                th:href="@{/order/detail/{id}(id=${order.id})}">
                 상세보기
             </a>
 
-            <!-- 주문 취소 버튼: 결제 완료 상태에서만 -->
-            <form th:if="${order.status != null
-                          and order.status.name() == 'PAYMENT_COMPLETED'}"
+            <form th:if="${order.status != null and order.status.name() == 'PAYMENT_COMPLETED'}"
                   th:action="@{/order/cancel/{id}(id=${order.id})}"
                   method="post" class="d-inline">
                 <button class="btn btn-sm btn-danger">주문 취소</button>
             </form>
 
-            <!-- 반품 버튼: 배송 완료 상태에서만 -->
-            <form th:if="${order.status != null
-                          and order.status.name() == 'DELIVERED'}"
+            <form th:if="${order.status != null and order.status.name() == 'DELIVERED'}"
                   th:action="@{/order/refund/{id}(id=${order.id})}"
                   method="post" class="d-inline">
                 <button class="btn btn-sm btn-warning text-white">반품</button>
             </form>
-
         </td>
     </tr>
     </tbody>
 </table>
+
+<!-- 🛍️ 다시 쇼핑하러 가기 버튼 -->
+<div class="text-center mt-4">
+    <a href="/products" class="btn btn-lg btn-outline-primary">
+        🛍️ 다시 쇼핑하러 가기
+    </a>
+</div>
 
 </body>
 </html>
