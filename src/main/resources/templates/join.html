@@ -82,9 +82,9 @@
 
                 <div class="mb-3">
                     <label for="password" class="form-label">비밀번호 *</label>
-                    <input type="password" id="password" class="form-control" th:field="*{password}" required>
+                    <input type="password" id="password" class="form-control"
+                           th:field="*{password}" required>
                 </div>
-
                 <div class="mb-3">
                     <label for="passwordConfirm" class="form-label">비밀번호 확인 *</label>
                     <input type="password" id="passwordConfirm" class="form-control" required>
@@ -186,6 +186,30 @@
     function showTerms(type) {
         alert(type.toUpperCase() + " 약관 전문을 표시합니다.");
     }
+
+    // 비밀번호 정규식: 영어 + 숫자 + 특수문자 포함, 최소 8자리
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+    // [^\w\s] : 특수문자 (영문/숫자/언더스코어/공백이 아닌 문자)
+
+    document.getElementById("joinForm").addEventListener("submit", function (e) {
+        const pwd = document.getElementById("password").value;
+        const pwd2 = document.getElementById("passwordConfirm").value;
+
+        // 1) 비밀번호 규칙 검사
+        if (!passwordRegex.test(pwd)) {
+            e.preventDefault();
+            alert("비밀번호는 영어, 숫자, 특수문자를 포함한 8자리 이상이어야 합니다.");
+            return;
+        }
+
+        // 2) 비밀번호 일치 검사
+        if (pwd !== pwd2) {
+            e.preventDefault();
+            alert("비밀번호가 일치하지 않습니다.");
+            return;
+        }
+    });
+
 </script>
 
 </body>
