@@ -1,5 +1,7 @@
 package com.example.web_spring.admin.Controller;
 
+import com.example.web_spring.Category.Category;
+import com.example.web_spring.Category.CategoryRepository;
 import com.example.web_spring.Product.Product;
 import com.example.web_spring.Product.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminProductController {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     /* ============================
        1. 상품 관리 메인
@@ -75,29 +78,40 @@ public class AdminProductController {
 
     // 등록 폼
     @GetMapping("/new")
-    public String newProductForm() {
+    public String newProductForm(Model model) {
+        model.addAttribute("categories", categoryRepository.findAll());
         return "admin/product/product_new";
     }
 
-    // 등록 처리 (간단 버전 – 나중에 DTO로 빼도 됨)
+
     @PostMapping("/new")
     public String createProduct(@RequestParam String name,
                                 @RequestParam int price,
                                 @RequestParam String description,
-                                @RequestParam(required = false) String imageUrl) {
+                                @RequestParam String imageUrl,
+                                @RequestParam Long categoryId) {
+
+        System.out.println("📌 선택한 카테고리 ID = " + categoryId);
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+
+        System.out.println("📌 저장할 카테고리명 = " + category.getName());
 
         Product product = Product.builder()
                 .name(name)
                 .price(price)
                 .description(description)
                 .imageUrl(imageUrl)
-                .stock(0)        // 기본 재고 0
+                .stock(0)
+                .category(category)
                 .build();
 
         productRepository.save(product);
 
         return "redirect:/admin/products/list";
     }
+
 
     /* ============================
        4. 재고 관리
