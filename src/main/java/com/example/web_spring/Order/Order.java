@@ -115,25 +115,6 @@ public class Order {
         this.delivery = delivery;
     }
 
-    public static Order createSingleProductOrder(Member member,
-                                                 Product product,
-                                                 int quantity,
-                                                 Long totalPrice,
-                                                 PaymentMethod method) {
-
-        Order order = new Order();
-
-        order.member = member;
-        order.orderDate = LocalDateTime.now();
-        order.totalPrice = totalPrice;
-        order.status = OrderStatus.PAYMENT_COMPLETED;   // 즉시 결제
-        order.paymentMethod = method;
-
-        OrderItem orderItem = new OrderItem(order, product, quantity, product.getPrice());
-        order.addOrderItem(orderItem);
-
-        return order;
-    }
     public void setUsedCouponId(Long usedCouponId) { this.usedCouponId = usedCouponId; }
     public void setUsedPoints(int usedPoints) { this.usedPoints = usedPoints; }
     public void setEarnedPoints(int earnedPoints) { this.earnedPoints = earnedPoints; }

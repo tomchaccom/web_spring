@@ -21,11 +21,9 @@ public class TemporaryOrder {
     private String phoneNumber;
     private String address;
 
-    // ⭐ 단일 상품 주문 시 필요한 필드
     private Long productId;
     private int quantity;
 
-    // 🔥 단일 상품 주문을 위한 필드 추가
     private Long singleProductId;  // 상품 ID
     private Integer singleQuantity; //
 

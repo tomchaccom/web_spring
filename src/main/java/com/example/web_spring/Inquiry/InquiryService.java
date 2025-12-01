@@ -18,7 +18,8 @@ public class InquiryService {
 
     private final InquiryRepository inquiryRepository;
     private final MemberRepository memberRepository;
-    // 문의 이미지 저장 경로 (리뷰와 동일한 최상위 폴더 구조)
+
+    // 문의 이미지 저장경로
     private final String uploadDir = System.getProperty("user.home") + "/uploads/inquiries/";
 
     @Transactional
@@ -34,7 +35,7 @@ public class InquiryService {
 
 
 
-        // ⭐ 이미지 저장 처리
+        // 이미지 저장 처리
         if (imageFile != null && !imageFile.isEmpty()) {
             try {
                 File dir = new File(uploadDir);

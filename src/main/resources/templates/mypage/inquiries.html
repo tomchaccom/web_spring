@@ -8,11 +8,11 @@
 
 <body>
 
-<!-- 🔥 공통 헤더 적용 -->
+<!-- 공통 헤더 적용 -->
 <div th:replace="fragments/header :: top-utility-bar"></div>
 <div th:replace="fragments/header :: navbar"></div>
 
-<!-- 🔥 컨테이너 시작 -->
+<!-- 컨테이너 시작 -->
 <div class="container mt-5">
 
   <h2 class="mb-4">💬 나의 문의내역</h2>
@@ -35,7 +35,7 @@
       <small class="text-muted"
              th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
 
-      <!-- 🔥 관리자 답변 블록 -->
+      <!-- 관리자 답변 블록 -->
       <div class="mt-3 p-3 border rounded bg-light">
         <strong>📌 관리자 답변</strong>
 

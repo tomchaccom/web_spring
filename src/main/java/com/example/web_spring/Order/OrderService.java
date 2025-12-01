@@ -65,9 +65,6 @@ public class OrderService {
 
         Coupon usedCoupon = null;
 
-    /* -------------------------------
-       ⭐ 1) 쿠폰 적용
-       ------------------------------- */
         if (couponId != null && couponId > 0) {
             usedCoupon = couponRepository.findById(couponId)
                     .orElseThrow(() -> new IllegalArgumentException("쿠폰 없음"));
@@ -78,9 +75,6 @@ public class OrderService {
             }
         }
 
-    /* -------------------------------
-       ⭐ 2) 적립금 사용
-       ------------------------------- */
         if (usedPoints > 0) {
             if (member.getPoints() < usedPoints) {
                 throw new IllegalStateException("적립금 부족");
@@ -92,23 +86,14 @@ public class OrderService {
 
         if (totalPrice < 0) totalPrice = 0;
 
-    /* -------------------------------
-       ⭐ 3) 적립금 적립 (1%)
-       ------------------------------- */
         int earnedPoints = (int) (totalPrice * 0.01);
 
-    /* -------------------------------
-       ⭐ 4) 주문 생성
-       ------------------------------- */
         Order order = Order.create(member, temp, totalPrice, method);
 
         order.setUsedCouponId(usedCoupon != null ? usedCoupon.getId() : null);
         order.setUsedPoints(usedPoints);
         order.setEarnedPoints(earnedPoints);
 
-    /* -------------------------------
-       ⭐ 5) 주문 아이템 생성 + 재고 차감
-       ------------------------------- */
         for (Cart cart : cartItems) {
             Product product = cart.getProduct();
             product.reduceStock(cart.getQuantity());
@@ -121,24 +106,16 @@ public class OrderService {
             order.addOrderItem(item);
         }
 
-    /* -------------------------------
-       ⭐ 6) 배송 정보 설정
-       ------------------------------- */
         Delivery delivery = Delivery.create(order, temp.getAddress());
         delivery.setState(DeliveryState.READY);
         order.setDelivery(delivery);
 
-    /* -------------------------------
-       ⭐ 7) 저장 및 정리
-       ------------------------------- */
         cartService.clearCart(username);
         orderRepository.save(order);
         temporaryOrderRepository.delete(temp);
 
         return order.getId();
     }
-
-
 
     @Transactional(readOnly = true)
     public Order findOrderById(Long id) {
@@ -172,30 +149,26 @@ public class OrderService {
 
         Member member = order.getMember();
 
-        // ⭐ 1) 재고 복원 로직 추가
         for (OrderItem item : order.getOrderItems()) {
             Product product = item.getProduct();
             product.increaseStock(item.getQuantity());  // stock += quantity
         }
-        // ⭐ 2) 쿠폰 롤백
+
         if (order.getUsedCouponId() != null) {
             Coupon coupon = couponRepository.findById(order.getUsedCouponId())
                     .orElseThrow(() -> new IllegalArgumentException("쿠폰 존재하지 않음"));
             coupon.setUsed(false); // 다시 사용 가능!
         }
 
-        // ⭐ 3) 사용한 적립금 되돌리기
         if (order.getUsedPoints() > 0) {
             member.setPoints(member.getPoints() + order.getUsedPoints());
         }
 
-        // ⭐ 4) 적립된 적립금 회수
         if (order.getEarnedPoints() > 0) {
             member.setPoints(member.getPoints() - order.getEarnedPoints());
             if (member.getPoints() < 0) member.setPoints(0); // 방어 코드
         }
 
-        // ⭐ 2) 상태 변경
         order.setStatus(OrderStatus.CANCELED);
     }
 
@@ -217,40 +190,31 @@ public class OrderService {
 
         Member member = order.getMember();
 
-        // 배송 상태 변경
-        order.getDelivery().setState(DeliveryState.RETURN_REQUESTED);
 
-        // 주문 상태 변경
+        order.getDelivery().setState(DeliveryState.RETURN_REQUESTED);
         order.setStatus(OrderStatus.REFUNDED);
 
-        // ⭐⭐⭐ 재고 복원 로직 추가!
         for (OrderItem item : order.getOrderItems()) {
             Product product = item.getProduct();
             product.increaseStock(item.getQuantity());    // 재고 증가
         }
 
-        // ⭐ 2) 쿠폰 복원
         if (order.getUsedCouponId() != null) {
             Coupon coupon = couponRepository.findById(order.getUsedCouponId())
                     .orElseThrow(() -> new IllegalArgumentException("쿠폰 없음"));
             coupon.setUsed(false);
         }
 
-        // ⭐ 3) 사용된 적립금 복원
         if (order.getUsedPoints() > 0) {
             member.setPoints(member.getPoints() + order.getUsedPoints());
         }
 
-        // ⭐ 4) 적립된 적립금 회수
         if (order.getEarnedPoints() > 0) {
             member.setPoints(member.getPoints() - order.getEarnedPoints());
             if (member.getPoints() < 0) member.setPoints(0);
         }
 
-
-
     }
-
 
     @Transactional
     public void saveSingleProductTemporaryOrder(Long productId, int quantity, String username) {
@@ -272,22 +236,16 @@ public class OrderService {
             throw new IllegalArgumentException("본인의 주문만 확정할 수 없습니다.");
         }
 
-        // 이미 확정된 주문은 무시
         if (order.getStatus() == OrderStatus.DELIVERED) return;
 
-        // 상태 변경
+
         order.setStatus(OrderStatus.DELIVERED);
         order.getDelivery().setState(DeliveryState.DELIVERED);
 
-        // ⭐ 여기서 적립금 다시 계산해 지급
         int earnedPoints = (int) (order.getTotalPrice() * 0.01);
         order.setEarnedPoints(earnedPoints);
 
         Member member = order.getMember();
         member.setPoints(member.getPoints() + earnedPoints);
     }
-
-
-
-
 }

@@ -17,7 +17,7 @@ public class AdminController {
             model.addAttribute("adminName", principal.getName());
         }
 
-        return "admin/dashboard"; // admin/dashboard.html 렌더링
+        return "admin/dashboard";
     }
 
     // 고객 CS 메인
@@ -28,7 +28,7 @@ public class AdminController {
             model.addAttribute("adminName", principal.getName());
         }
 
-        return "admin/cs/cs_main"; // 고객 CS 메인 페이지
+        return "admin/cs/cs_main";
     }
 
 }

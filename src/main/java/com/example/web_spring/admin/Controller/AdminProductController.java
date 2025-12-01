@@ -27,20 +27,15 @@ public class AdminProductController {
     private final CategoryRepository categoryRepository;
     private final OrderRepository orderRepository;
 
-    /* ============================
-       1. 상품 관리 메인
-       ============================ */
+
     @GetMapping
     public String productMain() {
         // /templates/admin/product/product_manage.html
         return "admin/product/product_manage";
     }
 
-    /* ============================
-       2. 상품 목록 / 수정
-       ============================ */
 
-    // 상품 목록 (수정 진입용 리스트)
+    // 상품 목록
     @GetMapping("/list")
     public String productList(Model model) {
         model.addAttribute("products", productRepository.findAll());
@@ -90,10 +85,6 @@ public class AdminProductController {
         return "redirect:/admin/products/list";
     }
 
-    /* ============================
-       3. 신규 상품 등록
-       ============================ */
-
     // 등록 폼
     @GetMapping("/new")
     public String newProductForm(Model model) {
@@ -108,7 +99,7 @@ public class AdminProductController {
                                 @RequestParam String description,
                                 @RequestParam String imageUrl,
                                 @RequestParam Long categoryId,
-                                @RequestParam int stock) {   // ← 🔥 stock 추가
+                                @RequestParam int stock) {
 
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
@@ -118,7 +109,7 @@ public class AdminProductController {
                 .price(price)
                 .description(description)
                 .imageUrl(imageUrl)
-                .stock(stock)   // ← 🔥 초기 재고 적용
+                .stock(stock)
                 .category(category)
                 .build();
 
@@ -129,9 +120,7 @@ public class AdminProductController {
 
 
 
-    /* ============================
-       4. 재고 관리
-       ============================ */
+
 
     // 재고 관리용 상품 목록
     @GetMapping("/stock/list")
