@@ -29,4 +29,20 @@ public class CommentService {
 
         commentRepository.save(comment);
     }
+
+    @Transactional
+    public void deleteComment(Long commentId, String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글 없음"));
+
+        if (!comment.getMember().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("본인만 삭제할 수 있습니다.");
+        }
+
+        commentRepository.delete(comment);
+    }
+
 }

@@ -23,4 +23,17 @@ public class CommentController {
 
         return "redirect:/products/" + productId;
     }
+
+    @PostMapping("/products/{productId}/reviews/{reviewId}/comment/{commentId}/delete")
+    public String deleteComment(@PathVariable Long productId,
+                                @PathVariable Long reviewId,
+                                @PathVariable Long commentId,
+                                Principal principal) {
+
+        String username = principal.getName();
+        commentService.deleteComment(commentId, username);
+
+        return "redirect:/products/" + productId;
+    }
+
 }
