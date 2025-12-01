@@ -18,7 +18,7 @@
 
 <body>
 
-<!-- ⭐ 공통 헤더 적용 -->
+<!-- 공통 헤더 적용 -->
 <div th:replace="fragments/header :: top-utility-bar"></div>
 <div th:replace="fragments/header :: navbar"></div>
 
@@ -81,7 +81,7 @@
 
                     </div>
 
-                    <!-- 🔥 개별 재고 부족 메시지 -->
+                    <!-- 개별 재고 부족 메시지 -->
                     <p th:if="${item.product.stock <= item.quantity}"
                        class="text-danger small mt-1">
                         재고 부족 — 더 이상 추가할 수 없습니다.
@@ -114,14 +114,14 @@
                       th:text="${#numbers.formatInteger(totalPrice, 3, 'COMMA')} + '원'"></span>
             </h4>
 
-            <!-- 🔥 전체 재고 체크: 재고 부족 없음 -->
+            <!--  전체 재고 체크: 재고 부족 없음 -->
             <a th:if="${!stockError}"
                href="/order"
                class="btn btn-success btn-lg">
                 주문하기
             </a>
 
-            <!-- 🔥 전체 재고 체크: 재고 부족 있으면 비활성화 -->
+            <!--  전체 재고 체크: 재고 부족 있으면 비활성화 -->
             <button th:if="${stockError}"
                     class="btn btn-secondary btn-lg"
                     disabled>

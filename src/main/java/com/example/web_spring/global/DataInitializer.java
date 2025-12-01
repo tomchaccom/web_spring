@@ -30,19 +30,12 @@ public class DataInitializer implements CommandLineRunner {
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
-
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
-    private final DeliveryRepository deliveryRepository;
-
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
 
-        // -----------------------
-        // 1. 관리자 / 사용자 생성
-        // -----------------------
         if (memberRepository.findByUsername("admin").isEmpty()) {
             Member admin = Member.builder()
                     .username("admin")
@@ -65,10 +58,6 @@ public class DataInitializer implements CommandLineRunner {
             memberRepository.save(user);
         }
 
-
-        // -----------------------
-        // 2. 카테고리 생성
-        // -----------------------
         if (categoryRepository.count() == 0) {
             categoryRepository.save(new Category("노트북"));
             categoryRepository.save(new Category("스마트폰"));
@@ -85,9 +74,6 @@ public class DataInitializer implements CommandLineRunner {
         Category accessory = categoryRepository.findByName("악세서리").orElse(null);
 
 
-        // -----------------------
-        // 3. 상품 더미 데이터 생성
-        // -----------------------
         if (productRepository.count() == 0) {
 
             Product p1 = Product.builder()
@@ -139,9 +125,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
 
-        // -----------------------
-        // 4. 주문 더미 데이터 생성
-        // -----------------------
+        // 주문 더미 데이터
         Member user = memberRepository.findByUsername("user").orElse(null);
 
         if (user != null && orderRepository.count() == 0) {
@@ -149,7 +133,7 @@ public class DataInitializer implements CommandLineRunner {
             Product phoneProduct = productRepository.findByName("아이폰 15").orElse(null);
             Product macProduct = productRepository.findByName("맥북 프로").orElse(null);
 
-            // ===== 1) 배송완료 주문 생성 =====
+            // 주문 더미 생성
             Order order1 = new Order(
                     user,
                     "홍길동",
@@ -169,8 +153,6 @@ public class DataInitializer implements CommandLineRunner {
             orderRepository.save(order1);
 
 
-
-            // ===== 2) 주문취소 주문 생성 =====
             Order order2 = new Order(
                     user,
                     "홍길동",
@@ -190,7 +172,7 @@ public class DataInitializer implements CommandLineRunner {
 
             orderRepository.save(order2);
 
-            System.out.println("✅ 더미 주문 데이터 2건 생성 완료 (배송완료 + 주문취소)");
+            System.out.println("더미 주문 데이터 2건 생성 완료 (배송완료 + 주문취소)");
         }
     }
 }

@@ -36,7 +36,7 @@ public class MemberService {
         );
         memberRepository.save(member);
 
-        // ⭐ 회원가입 시 10000원 쿠폰 자동 발급
+        // 회원가입 시 10000원 쿠폰 자동 발급
         Coupon coupon = new Coupon(member, 10000);
         couponRepository.save(coupon);
         return member.getId();

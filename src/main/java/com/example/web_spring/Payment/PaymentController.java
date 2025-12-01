@@ -48,7 +48,6 @@ public class PaymentController {
 
         String username = principal.getName();
 
-        // OrderService의 새로운 시그니처에 맞게 호출
         Long orderId = orderService.completeOrder(
                 username,
                 PaymentMethod.valueOf(paymentMethod),
