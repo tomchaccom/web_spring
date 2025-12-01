@@ -84,11 +84,19 @@
                     <label for="password" class="form-label">비밀번호 *</label>
                     <input type="password" id="password" class="form-control"
                            th:field="*{password}" required>
+
+                    <!-- 실시간 결과 표시 -->
+                    <small id="password-validation" class="d-block mt-1"></small>
                 </div>
+
                 <div class="mb-3">
                     <label for="passwordConfirm" class="form-label">비밀번호 확인 *</label>
                     <input type="password" id="passwordConfirm" class="form-control" required>
+
+                    <!-- 비밀번호 확인 메시지 -->
+                    <small id="password-confirm-validation" class="d-block mt-1"></small>
                 </div>
+
 
                 <div class="mb-3">
                     <label for="email" class="form-label">이메일 *</label>
@@ -118,43 +126,117 @@
 </footer>
 
 <script>
-    // 전체 체크 및 약관 체크 로직
+    // ------------------------------------------------------
+    // 약관 체크 요소
+    // ------------------------------------------------------
     const agreeAll = document.getElementById('agreeAll');
     const allCheckboxes = document.querySelectorAll('.agree-check');
     const requiredCheckboxes = document.querySelectorAll('.agree-check[required]');
     const submitButton = document.querySelector('.submit-button');
     const agreementMessage = document.getElementById('agreement-message');
 
-    // 전체 체크 → 개별 체크로 전파
-    agreeAll.addEventListener('change', function () {
-        allCheckboxes.forEach(cb => cb.checked = agreeAll.checked);
-        checkAgreementStatus();
-    });
+    // ------------------------------------------------------
+    // 비밀번호 요소 + 정규식
+    // ------------------------------------------------------
+    const pwdInput = document.getElementById("password");
+    const pwdMsg = document.getElementById("password-validation");
+    const pwd = document.getElementById("password");
+    const pwdConfirm = document.getElementById("passwordConfirm");
+    const pwdConfirmMsg = document.getElementById("password-confirm-validation");
 
-    // 개별 체크 → 전체 체크 상태 업데이트
-    allCheckboxes.forEach(cb => {
-        cb.addEventListener('change', () => {
-            const allChecked = Array.from(allCheckboxes).every(c => c.checked);
-            agreeAll.checked = allChecked;
-            checkAgreementStatus();
-        });
-    });
+    // 영어 + 숫자 + 특수문자 포함, 8자리 이상
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
 
-    // 필수 약관 체크 여부에 따라 버튼 활성화
-    function checkAgreementStatus() {
+
+    // ------------------------------------------------------
+    // 회원가입 버튼 상태 업데이트 (모든 조건을 종합 검사)
+    // ------------------------------------------------------
+    function updateSubmitButtonState() {
+
+        // 1) 필수 약관 체크
         const requiredAgreed = Array.from(requiredCheckboxes).every(c => c.checked);
 
-        if (requiredAgreed) {
+        // 2) 비밀번호 규칙 검사
+        const passwordValid = passwordRegex.test(pwdInput.value);
+
+        // 3) 비밀번호 일치 검사
+        const passwordMatch = (pwd.value === pwdConfirm.value);
+
+        // 4) 최종 조건
+        if (requiredAgreed && passwordValid && passwordMatch) {
             submitButton.disabled = false;
             agreementMessage.style.display = 'none';
         } else {
             submitButton.disabled = true;
-            agreementMessage.style.display = 'block';
+
+            if (!requiredAgreed) {
+                agreementMessage.style.display = 'block';
+            }
         }
     }
 
-    checkAgreementStatus();
 
+    // ------------------------------------------------------
+    // 약관 체크 이벤트
+    // ------------------------------------------------------
+    agreeAll.addEventListener('change', function () {
+        allCheckboxes.forEach(cb => cb.checked = agreeAll.checked);
+        updateSubmitButtonState();
+    });
+
+    allCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            const allChecked = Array.from(allCheckboxes).every(c => c.checked);
+            agreeAll.checked = allChecked;
+            updateSubmitButtonState();
+        });
+    });
+
+
+    // ------------------------------------------------------
+    // 비밀번호 규칙 실시간 검사
+    // ------------------------------------------------------
+    pwdInput.addEventListener("input", function () {
+        const pwdValue = pwdInput.value;
+
+        if (pwdValue.length === 0) {
+            pwdMsg.textContent = "";
+        } else if (passwordRegex.test(pwdValue)) {
+            pwdMsg.textContent = "✔ 사용 가능한 비밀번호입니다.";
+            pwdMsg.className = "text-success d-block mt-1";
+        } else {
+            pwdMsg.textContent = "❌ 영어, 숫자, 특수문자를 포함한 8자리 이상이어야 합니다.";
+            pwdMsg.className = "text-danger d-block mt-1";
+        }
+
+        updateSubmitButtonState();
+    });
+
+
+    // ------------------------------------------------------
+    // 비밀번호 확인 실시간 검사
+    // ------------------------------------------------------
+    function validatePasswordMatch() {
+        if (pwdConfirm.value.length === 0) {
+            pwdConfirmMsg.textContent = "";
+        } else if (pwd.value === pwdConfirm.value) {
+            pwdConfirmMsg.textContent = "✔ 비밀번호가 일치합니다.";
+            pwdConfirmMsg.className = "text-success d-block mt-1";
+        } else {
+            pwdConfirmMsg.textContent = "❌ 비밀번호가 일치하지 않습니다.";
+            pwdConfirmMsg.className = "text-danger d-block mt-1";
+        }
+
+        updateSubmitButtonState();
+    }
+
+    pwd.addEventListener("input", validatePasswordMatch);
+    pwdConfirm.addEventListener("input", validatePasswordMatch);
+
+
+    // ------------------------------------------------------
+    // 아이디 중복 확인
+    // ------------------------------------------------------
     async function checkDuplicate() {
         const username = document.getElementById("username").value.trim();
         const messageEl = document.getElementById("dup-message");
@@ -169,11 +251,9 @@
             const res = await fetch(`/join/dup?username=` + encodeURIComponent(username));
 
             if (res.ok) {
-                // 사용 가능
                 messageEl.textContent = "사용 가능한 아이디입니다.";
                 messageEl.className = "text-success";
             } else {
-                // 중복
                 messageEl.textContent = "이미 사용 중인 아이디입니다.";
                 messageEl.className = "text-danger";
             }
@@ -183,34 +263,16 @@
         }
     }
 
+
+    // ------------------------------------------------------
+    // 약관 전문 보기
+    // ------------------------------------------------------
     function showTerms(type) {
         alert(type.toUpperCase() + " 약관 전문을 표시합니다.");
     }
 
-    // 비밀번호 정규식: 영어 + 숫자 + 특수문자 포함, 최소 8자리
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
-    // [^\w\s] : 특수문자 (영문/숫자/언더스코어/공백이 아닌 문자)
-
-    document.getElementById("joinForm").addEventListener("submit", function (e) {
-        const pwd = document.getElementById("password").value;
-        const pwd2 = document.getElementById("passwordConfirm").value;
-
-        // 1) 비밀번호 규칙 검사
-        if (!passwordRegex.test(pwd)) {
-            e.preventDefault();
-            alert("비밀번호는 영어, 숫자, 특수문자를 포함한 8자리 이상이어야 합니다.");
-            return;
-        }
-
-        // 2) 비밀번호 일치 검사
-        if (pwd !== pwd2) {
-            e.preventDefault();
-            alert("비밀번호가 일치하지 않습니다.");
-            return;
-        }
-    });
-
 </script>
+
 
 </body>
 </html>
