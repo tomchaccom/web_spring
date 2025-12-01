@@ -117,7 +117,7 @@
 
         <!-- 리뷰 삭제 -->
         <form th:if="${review.member.username == currentUser}"
-              th:action="@{/products/{id}/reviews/{reviewId}(id=${product.id}, reviewId=${review.id})}"
+              th:action="@{/products/{id}/reviews/{reviewId}/delete(id=${product.id}, reviewId=${review.id})}"
               method="post"
               onsubmit="return confirm('리뷰를 삭제하시겠습니까?');">
           <button class="review-delete-btn">삭제</button>
@@ -151,6 +151,19 @@
                   th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
 
             <p class="mt-1" th:text="${comment.content}"></p>
+
+            <!-- 댓글 삭제 -->
+            <form th:if="${comment.member.username == currentUser}"
+                  th:action="@{/products/{productId}/reviews/{reviewId}/comment/{commentId}/delete(
+                        productId=${product.id},
+                        reviewId=${review.id},
+                        commentId=${comment.id}
+                    )}"
+                  method="post"
+                  onsubmit="return confirm('댓글을 삭제하시겠습니까?');">
+
+              <button class="btn btn-sm btn-danger">삭제</button>
+              </form>
           </div>
         </div>
 
