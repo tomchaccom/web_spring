@@ -37,15 +37,17 @@ public class AdminProductController {
         return "admin/product/product_list";
     }
 
-    // 상품 수정 페이지
     @GetMapping("/{id}/edit")
     public String editProduct(@PathVariable Long id, Model model) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
         model.addAttribute("product", product);
+        model.addAttribute("categories", categoryRepository.findAll());  // 🔥 추가
+
         return "admin/product/product_edit";
     }
+
 
     // 상품 수정 처리
     @PostMapping("/{id}/edit")
@@ -53,13 +55,19 @@ public class AdminProductController {
                                 @RequestParam String name,
                                 @RequestParam int price,
                                 @RequestParam String description,
+                                @RequestParam Long categoryId,
                                 @RequestParam(required = false) String imageUrl) {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+
+
         // 엔티티 메서드로 필드 변경
         product.updateProduct(name, price, description);
+        product.changeCategory(category);
 
         if (imageUrl != null && !imageUrl.isBlank()) {
             product.changeImage(imageUrl);
