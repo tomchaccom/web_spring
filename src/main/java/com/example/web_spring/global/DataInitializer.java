@@ -178,8 +178,9 @@ public class DataInitializer implements CommandLineRunner {
                     "서울시 강남구 테헤란로 101",
                     3200000L,
                     PaymentMethod.CARD,
-                    OrderStatus.DELIVERED
+                    OrderStatus.PAYMENT_COMPLETED
             );
+
 
             OrderItem item2 = new OrderItem(order2, macProduct, 1, macProduct.getPrice());
             order2.addOrderItem(item2);

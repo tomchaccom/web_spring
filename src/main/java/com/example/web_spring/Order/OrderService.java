@@ -96,7 +96,7 @@ public class OrderService {
        ⭐ 3) 적립금 적립 (1%)
        ------------------------------- */
         int earnedPoints = (int) (totalPrice * 0.01);
-        // member.setPoints(member.getPoints() + earnedPoints);
+        member.setPoints(member.getPoints() + earnedPoints);
 
     /* -------------------------------
        ⭐ 4) 주문 생성
@@ -105,7 +105,7 @@ public class OrderService {
 
         order.setUsedCouponId(usedCoupon != null ? usedCoupon.getId() : null);
         order.setUsedPoints(usedPoints);
-        // order.setEarnedPoints(earnedPoints);
+        order.setEarnedPoints(earnedPoints);
 
     /* -------------------------------
        ⭐ 5) 주문 아이템 생성 + 재고 차감
@@ -164,10 +164,13 @@ public class OrderService {
             throw new IllegalArgumentException("본인의 주문만 취소할 수 있습니다.");
         }
 
-        if (order.getStatus() == OrderStatus.SHIPPING ||
-                order.getStatus() == OrderStatus.DELIVERED) {
+        DeliveryState deliveryState = order.getDelivery().getState();
+
+        if (deliveryState == DeliveryState.SHIPPING ||
+                deliveryState == DeliveryState.DELIVERED) {
             throw new IllegalStateException("배송 중이거나 배송 완료된 주문은 취소할 수 없습니다.");
         }
+
         Member member = order.getMember();
 
         // ⭐ 1) 재고 복원 로직 추가
@@ -208,10 +211,10 @@ public class OrderService {
             throw new IllegalStateException("본인의 주문만 반품할 수 있습니다.");
         }
 
-        // ⭐ 배송완료 상태에서만 반품 가능
-        if (order.getStatus() != OrderStatus.DELIVERED) {
+        if (order.getDelivery().getState() != DeliveryState.DELIVERED) {
             throw new IllegalStateException("배송완료 상태에서만 반품 요청이 가능합니다.");
         }
+
 
         Member member = order.getMember();
 

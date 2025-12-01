@@ -38,41 +38,45 @@
             <td th:text="${order.orderItems.size()} + '개'"></td>
             <td th:text="${#numbers.formatInteger(order.totalPrice, 3, 'COMMA')} + '원'"></td>
 
+            <!-- 결제 상태 -->
             <td>
-                    <span class="badge px-3 py-2"
-                          th:class="'bg-' + ${order.status.badgeClass}"
-                          th:text="${order.status.korean}">
-                    </span>
+                <span class="badge px-3 py-2"
+                      th:class="'bg-' + ${order.status.badgeClass}"
+                      th:text="${order.status.korean}">
+                </span>
             </td>
 
+            <!-- 배송 상태 -->
             <td>
-                    <span class="badge px-3 py-2"
-                          th:if="${order.delivery != null}"
-                          th:class="'bg-' + ${order.delivery.state.badgeClass}"
-                          th:text="${order.delivery.state.korean}">
-                    </span>
+                <span class="badge px-3 py-2"
+                      th:if="${order.delivery != null}"
+                      th:class="'bg-' + ${order.delivery.state.badgeClass}"
+                      th:text="${order.delivery.state.korean}">
+                </span>
                 <span th:if="${order.delivery == null}" class="text-muted">-</span>
             </td>
 
+            <!-- 관리 버튼 -->
             <td>
+                <!-- 상세보기 -->
                 <a class="btn btn-sm btn-primary me-2"
                    th:href="@{/order/detail/{id}(id=${order.id})}">
                     상세보기
                 </a>
 
+                <!-- 주문취소 (배송준비중일 때만 가능) -->
                 <form th:if="${order.delivery != null and order.delivery.state.name() == 'READY'}"
                       th:action="@{/order/cancel/{id}(id=${order.id})}"
                       method="post" class="d-inline">
                     <button class="btn btn-sm btn-danger">주문 취소</button>
                 </form>
 
-                <!-- 반품 버튼 -->
+                <!-- 반품 (배송완료일 때만 가능) -->
                 <form th:if="${order.delivery != null and order.delivery.state.name() == 'DELIVERED'}"
                       th:action="@{/order/refund/{id}(id=${order.id})}"
                       method="post" class="d-inline">
                     <button class="btn btn-sm btn-warning text-white">반품</button>
                 </form>
-
             </td>
         </tr>
         </tbody>
@@ -85,7 +89,7 @@
         </a>
     </div>
 
-</div> <!-- container 끝 -->
+</div>
 
 </body>
 </html>
