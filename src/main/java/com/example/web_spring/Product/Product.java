@@ -50,6 +50,25 @@ public class Product {
     public void increaseStock(int quantity) {
         this.stock += quantity;
     }
+    public void updateProduct(String name, int price, String description) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+    }
 
+    public void changeImage(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void changeCategory(Category category) {
+        this.category = category;
+    }
+
+    public void changeStock(int newStock) {
+        if (newStock < 0) {
+            throw new IllegalStateException("재고는 0 이상이어야 합니다.");
+        }
+        this.stock = newStock;
+    }
 
 }
