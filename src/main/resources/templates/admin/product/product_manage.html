@@ -32,9 +32,9 @@
 
     <h2 class="fw-bold mb-4 text-center">📦 상품 관리</h2>
 
-    <div class="row g-4 mt-4">
+    <div class="row g-4 mt-4 justify-content-center">
 
-        <!-- 신규 상품 등록 -->
+    <!-- 신규 상품 등록 -->
         <div class="col-md-4">
             <a href="/admin/products/new" class="text-decoration-none text-dark">
                 <div class="menu-card">
@@ -55,8 +55,12 @@
                 </div>
             </a>
         </div>
+    </div>
 
-        <!-- 재고 관리 -->
+
+    <div class="row g-4 mt-4 justify-content-center">
+
+    <!-- 재고 관리 -->
         <div class="col-md-4">
             <a href="/admin/products/stock/list" class="text-decoration-none text-dark">
                 <div class="menu-card">
@@ -67,18 +71,16 @@
             </a>
         </div>
 
+        <div class="col-md-4">
+            <a href="/admin/products/returns" class="text-decoration-none text-dark">
+                <div class="menu-card">
+                    <div class="menu-icon">📦</div>
+                    <h4>반품 · 배송 관리</h4>
+                    <p class="mt-2">반품 승인 / 배송 상태 관리</p>
+                </div>
+            </a>
+        </div>
     </div>
-
-    <div class="col-md-4">
-        <a href="/admin/products/returns" class="text-decoration-none text-dark">
-            <div class="menu-card">
-                <div class="menu-icon">📦</div>
-                <h4>반품 · 배송 관리</h4>
-                <p class="mt-2">반품 승인 / 배송 상태 관리</p>
-            </div>
-        </a>
-    </div>
-
 
     <div class="text-center mt-5">
         <a href="/admin/dashboard" class="btn btn-secondary px-4">← 관리자 메인으로</a>
