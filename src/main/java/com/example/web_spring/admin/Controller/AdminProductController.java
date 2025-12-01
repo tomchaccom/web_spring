@@ -2,12 +2,21 @@ package com.example.web_spring.admin.Controller;
 
 import com.example.web_spring.Category.Category;
 import com.example.web_spring.Category.CategoryRepository;
+import com.example.web_spring.Delivery.DeliveryState;
+import com.example.web_spring.Member.Member;
+import com.example.web_spring.Order.Order;
+import com.example.web_spring.Order.OrderRepository;
+import com.example.web_spring.Order.OrderStatus;
+import com.example.web_spring.OrderItem.OrderItem;
 import com.example.web_spring.Product.Product;
 import com.example.web_spring.Product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -16,6 +25,7 @@ public class AdminProductController {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final OrderRepository orderRepository;
 
     /* ============================
        1. 상품 관리 메인
@@ -156,4 +166,69 @@ public class AdminProductController {
         // 처리 후 다시 해당 상품 재고 화면으로
         return "redirect:/admin/products/" + id + "/stock";
     }
+
+    // 반품 · 배송 관리 메인 페이지
+    @GetMapping("/returns")
+    public String manageReturns(Model model) {
+
+        // 배송 중 / 배송 준비중 / 반품 요청된 주문 가져오기
+        List<Order> orders = orderRepository.findAll(); // 필요시 상태 필터링해도 됨
+
+        model.addAttribute("orders", orders);
+
+        return "admin/product/product_returns";
+    }
+
+
+
+// ...
+
+    // 배송 상태 변경 처리
+    @Transactional
+    @PostMapping("/returns/{orderId}/delivery")
+    public String updateDeliveryState(@PathVariable Long orderId,
+                                      @RequestParam DeliveryState state) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+
+        order.getDelivery().setState(state);
+
+        // 🔥 명시적으로 저장 (안 해도 영속 상태면 flush 되지만, 이해하기 쉽도록)
+        orderRepository.save(order);
+
+        return "redirect:/admin/products/returns";
+    }
+
+    // 반품 승인 처리
+    @Transactional
+    @PostMapping("/returns/{orderId}/approve")
+    public String approveReturn(@PathVariable Long orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+
+        // 상태 변경
+        order.changeStatus(OrderStatus.REFUNDED);
+        order.changeDeliveryState(DeliveryState.RETURNED);
+
+        // 재고 복원
+        for (OrderItem item : order.getOrderItems()) {
+            Product p = item.getProduct();
+            p.increaseStock(item.getQuantity());
+        }
+
+        // 적립금 회수
+        Member member = order.getMember();
+        member.setPoints(member.getPoints() - order.getEarnedPoints());
+        if (member.getPoints() < 0) member.setPoints(0);
+
+        // 🔥 마찬가지로 저장
+        orderRepository.save(order);
+
+        return "redirect:/admin/products/returns";
+    }
+
+
+
 }

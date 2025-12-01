@@ -60,17 +60,19 @@
                     상세보기
                 </a>
 
-                <form th:if="${order.status != null and order.status.name() == 'PAYMENT_COMPLETED'}"
+                <form th:if="${order.delivery != null and order.delivery.state.name() == 'READY'}"
                       th:action="@{/order/cancel/{id}(id=${order.id})}"
                       method="post" class="d-inline">
                     <button class="btn btn-sm btn-danger">주문 취소</button>
                 </form>
 
-                <form th:if="${order.status != null and order.status.name() == 'DELIVERED'}"
+                <!-- 반품 버튼 -->
+                <form th:if="${order.delivery != null and order.delivery.state.name() == 'DELIVERED'}"
                       th:action="@{/order/refund/{id}(id=${order.id})}"
                       method="post" class="d-inline">
                     <button class="btn btn-sm btn-warning text-white">반품</button>
                 </form>
+
             </td>
         </tr>
         </tbody>

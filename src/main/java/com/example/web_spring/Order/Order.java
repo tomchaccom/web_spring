@@ -1,5 +1,6 @@
 package com.example.web_spring.Order;
 import com.example.web_spring.Delivery.Delivery;
+import com.example.web_spring.Delivery.DeliveryState;
 import com.example.web_spring.Member.Member;
 import com.example.web_spring.OrderItem.OrderItem;
 import com.example.web_spring.Payment.PaymentMethod;
@@ -140,4 +141,15 @@ public class Order {
     public Long getUsedCouponId() { return usedCouponId; }
     public int getUsedPoints() { return usedPoints; }
     public int getEarnedPoints() { return earnedPoints; }
+
+    public void changeStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public void changeDeliveryState(DeliveryState state) {
+        if (this.delivery != null) {
+            this.delivery.setState(state);
+        }
+    }
+
 }
