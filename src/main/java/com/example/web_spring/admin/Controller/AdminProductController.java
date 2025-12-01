@@ -89,21 +89,18 @@ public class AdminProductController {
                                 @RequestParam int price,
                                 @RequestParam String description,
                                 @RequestParam String imageUrl,
-                                @RequestParam Long categoryId) {
-
-        System.out.println("📌 선택한 카테고리 ID = " + categoryId);
+                                @RequestParam Long categoryId,
+                                @RequestParam int stock) {   // ← 🔥 stock 추가
 
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
-
-        System.out.println("📌 저장할 카테고리명 = " + category.getName());
 
         Product product = Product.builder()
                 .name(name)
                 .price(price)
                 .description(description)
                 .imageUrl(imageUrl)
-                .stock(0)
+                .stock(stock)   // ← 🔥 초기 재고 적용
                 .category(category)
                 .build();
 
@@ -111,6 +108,7 @@ public class AdminProductController {
 
         return "redirect:/admin/products/list";
     }
+
 
 
     /* ============================
