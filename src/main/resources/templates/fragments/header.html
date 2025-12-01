@@ -68,10 +68,16 @@
             </ul>
 
 
-            <form class="d-flex ms-auto" th:action="@{/search}" method="get">
-                <input class="form-control me-2" type="search" placeholder="검색" name="q" style="width: 250px;">
+            <form class="d-flex ms-auto"
+                  onsubmit="event.preventDefault();
+                document.getElementById('searchInput').placeholder='아직 구현되지 않은 기능입니다.';">
+
+                <input id="searchInput" class="form-control me-2"
+                       type="search" placeholder="검색" name="q" style="width: 250px;">
+
                 <button class="btn btn-outline-light" type="submit">검색</button>
             </form>
+
         </div>
     </div>
 </nav>
