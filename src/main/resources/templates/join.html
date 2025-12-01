@@ -124,7 +124,6 @@
 <footer class="text-center py-3 text-muted">
     &copy; 2025 Shopping Mall
 </footer>
-
 <script>
     // ------------------------------------------------------
     // 약관 체크 요소
@@ -134,6 +133,11 @@
     const requiredCheckboxes = document.querySelectorAll('.agree-check[required]');
     const submitButton = document.querySelector('.submit-button');
     const agreementMessage = document.getElementById('agreement-message');
+
+    // ------------------------------------------------------
+    // 아이디 중복 확인 상태 플래그
+    // ------------------------------------------------------
+    let usernameChecked = false;
 
     // ------------------------------------------------------
     // 비밀번호 요소 + 정규식
@@ -162,8 +166,11 @@
         // 3) 비밀번호 일치 검사
         const passwordMatch = (pwd.value === pwdConfirm.value);
 
-        // 4) 최종 조건
-        if (requiredAgreed && passwordValid && passwordMatch) {
+        // 4) 아이디 중복 확인 여부
+        // console.log("아이디 중복 확인 여부:", usernameChecked);
+
+        // 최종 조건
+        if (requiredAgreed && passwordValid && passwordMatch && usernameChecked) {
             submitButton.disabled = false;
             agreementMessage.style.display = 'none';
         } else {
@@ -235,15 +242,18 @@
 
 
     // ------------------------------------------------------
-    // 아이디 중복 확인
+    // 아이디 중복 확인 (버튼 클릭 시 호출)
     // ------------------------------------------------------
     async function checkDuplicate() {
         const username = document.getElementById("username").value.trim();
         const messageEl = document.getElementById("dup-message");
 
+        usernameChecked = false; // 기본값 (다시 입력하거나 실패하면 false)
+
         if (username === "") {
             messageEl.textContent = "아이디를 입력하세요.";
             messageEl.className = "text-danger";
+            updateSubmitButtonState();
             return;
         }
 
@@ -253,14 +263,19 @@
             if (res.ok) {
                 messageEl.textContent = "사용 가능한 아이디입니다.";
                 messageEl.className = "text-success";
+                usernameChecked = true;
             } else {
                 messageEl.textContent = "이미 사용 중인 아이디입니다.";
                 messageEl.className = "text-danger";
+                usernameChecked = false;
             }
         } catch (e) {
             messageEl.textContent = "중복 확인 중 오류가 발생했습니다.";
             messageEl.className = "text-danger";
+            usernameChecked = false;
         }
+
+        updateSubmitButtonState();
     }
 
 
@@ -272,6 +287,7 @@
     }
 
 </script>
+
 
 
 </body>
