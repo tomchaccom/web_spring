@@ -96,7 +96,6 @@ public class OrderService {
        ⭐ 3) 적립금 적립 (1%)
        ------------------------------- */
         int earnedPoints = (int) (totalPrice * 0.01);
-        member.setPoints(member.getPoints() + earnedPoints);
 
     /* -------------------------------
        ⭐ 4) 주문 생성
@@ -273,20 +272,21 @@ public class OrderService {
             throw new IllegalArgumentException("본인의 주문만 확정할 수 없습니다.");
         }
 
-        // 이미 완료면 무시
+        // 이미 확정된 주문은 무시
         if (order.getStatus() == OrderStatus.DELIVERED) return;
 
-        // 주문 상태 변경
+        // 상태 변경
         order.setStatus(OrderStatus.DELIVERED);
         order.getDelivery().setState(DeliveryState.DELIVERED);
 
-        // ⭐ 적립금 지급
-        int earned = order.getEarnedPoints();
-        if (earned > 0) {
-            Member member = order.getMember();
-            member.setPoints(member.getPoints() + earned);
-        }
+        // ⭐ 여기서 적립금 다시 계산해 지급
+        int earnedPoints = (int) (order.getTotalPrice() * 0.01);
+        order.setEarnedPoints(earnedPoints);
+
+        Member member = order.getMember();
+        member.setPoints(member.getPoints() + earnedPoints);
     }
+
 
 
 
