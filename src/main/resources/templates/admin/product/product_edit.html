@@ -33,6 +33,18 @@
     <input type="text" class="form-control" name="imageUrl" th:value="${product.imageUrl}">
   </div>
 
+  <div class="mb-3">
+    <label class="form-label">카테고리</label>
+    <select name="categoryId" class="form-select" required>
+      <option th:each="cat : ${categories}"
+              th:value="${cat.id}"
+              th:text="${cat.name}"
+              th:selected="${cat.id == product.category.id}">
+      </option>
+    </select>
+  </div>
+
+
   <button class="btn btn-primary w-100">수정 완료</button>
 
 </form>
