@@ -20,6 +20,8 @@
             <p><strong>이름:</strong> <span th:text="${username}"></span></p>
             <p><strong>이메일:</strong> <span th:text="${email}"></span></p>
             <p><strong>전화번호:</strong> <span th:text="${phone}"></span></p>
+            <p><strong>적립금:</strong> <span th:text="${#numbers.formatInteger(points, 3, 'COMMA')} + 'P'"></span></p>
+
 
             <a href="/mypage/edit" class="btn btn-primary me-2">정보 수정</a>
         </div>

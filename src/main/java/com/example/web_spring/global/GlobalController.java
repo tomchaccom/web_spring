@@ -3,6 +3,7 @@ package com.example.web_spring.global;
 import com.example.web_spring.Inquiry.Inquiry;
 import com.example.web_spring.Inquiry.InquiryService;
 import com.example.web_spring.Member.Dto.GetUserInfoDto;
+import com.example.web_spring.Member.Member;
 import com.example.web_spring.Member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -67,6 +68,9 @@ public class GlobalController {
         model.addAttribute("username", dto.getUsername());
         model.addAttribute("email", dto.getEmail());
         model.addAttribute("phone", dto.getPhone());
+
+        Member member = memberService.findByUsername(principal.getName());
+        model.addAttribute("points", member.getPoints());
 
         return "main/mypage";
     }
